@@ -1,5 +1,33 @@
 # 🎉 Welcome to Ssebowa AI - Where Genius Meets Universality! 🌟
 
+<p align="">
+  <a href="https://ssebowa.ai">
+    <img src="images/cover.jpg" height="">
+  </a>
+  <h1 align="center">
+    <a href="https://librechat.ai">Ssebowa Ai</a>
+  </h1>
+</p>
+
+<p align="center">
+  <a href="https://discord.gg/FpTFX2k3"> 
+    <img
+      src="https://img.shields.io/discord/1086345563026489514?label=&logo=discord&style=for-the-badge&logoWidth=20&logoColor=white&labelColor=000000&color=blueviolet">
+  </a>
+  <a href="https://https://twitter.com/Ssebowa123"> 
+    <img
+      src="https://img.shields.io/badge/X-red.svg?style=for-the-badge&logo=x&logoColor=white&labelColor=000000&logoWidth=20">
+  </a>
+  <a href="https://www.linkedin.com/showcase/ssebowa123"> 
+    <img
+      src="https://img.shields.io/badge/LINKEDIN-blue.svg?style=for-the-badge&logo=read-the-docs&logoColor=white&labelColor=000000&logoWidth=20">
+  </a>
+  <a aria-label="Sponsors" href="https://huggingface.co/Ssebowa-Ai">
+    <img
+      src="https://img.shields.io/badge/HUGGING-FACE-brightgreen.svg?style=for-the-badge&logo=huggingface&logoColor=white&labelColor=000000&logoWidth=20">
+  </a>
+</p>
+
 At Ssebowa AI, we hold technology, creativity, and innovation close to heart. Much like the enchanting fusion of art and science, our passion lies in merging cutting-edge AI with human ingenuity. We firmly believe that remarkable tools pave the path for breathtaking experiences, ultimately elevating humankind. 🚀 We are committed to building tools that can amplify humans` inherited abilities and making them easily accessible to everyone, everywhere regardless of location or resources.
 
 ## 🎯 Our Purpose
@@ -8,6 +36,12 @@ Crafting exceptional generative AI technology and making it universally accessib
 
 Imagine a harmonious convergence of brilliant minds, ingenious creations, and altruistic actions. Sounds delightfully intriguing, doesn't it? Indeed, it does! Thus, whenever someone engages with Ssebowa AI's offerings like building with Ssebowa APIs, they automatically contribute to noble causes like reforestation and tackling childhood hunger. Yes, you read that right! 🌳🍎
 
+<p align="">
+  <a href="https://ssebowa.ai">
+    <img src="images/college.png" height="">
+  </a>
+</p>
+
 ## 💫 Explore Endless Opportunities
 Ready to embark on an exhilarating expedition? Prepare to be enthralled by our groundbreaking Language Learning Models (LLMs) and spellbinding Text-to-Image model and visual language model. Trust us; they'll leave you speechless! 📚🖼️
 
@@ -15,13 +49,39 @@ Ready to embark on an exhilarating expedition? Prepare to be enthralled by our g
 
 Ever wished to conjure up fascinating artworks sans picking up a paintbrush? Presenting our magical solution! Convert plain texts into striking visuals instantaneously. Embark on this creative voyage ➡️ [ssebowa.ai](https://ssebowa.ai) 🎨
 
+<p align="">
+  <a href="https://ssebowa.ai">
+    <img src="images/Screenshot_imgen.png" height="">
+  </a>
+</p>
+
 ### Language Learning Models (LLMs)
 
 Propel your Natural Language Processing abilities sky-high with bespoke models tailor-made just for YOU. Initiate your exploration ➡️ [ssebowa.ai](https://ssebowa.ai) 🚀
 
+<p align="">
+  <a href="https://ssebowa.ai">
+    <img src="images/Screenshot_llm.png" height="">
+  </a>
+</p>
+
 ### Visual Language Models (VLMs)
 
 Visual language models are like seeing AI - they analyze images and text together, creating captions, answering questions about pictures. Try for yourself here ➡️ [ssebowa.ai](https://ssebowa.ai) 🖼️📝
+
+<p align="">
+  <a href="https://ssebowa.ai">
+    <img src="images/Screenshot_vlm1.png" height="">
+  </a>
+</p>
+
+## Difference between Ssebowa and Chatgpt4V
+
+<p align="centre">
+  <a href="https://ssebowa.ai">
+    <img src="images/sbwvlm.jpg" height="">
+  </a>
+</p>
 
 ## Installations
 
@@ -80,7 +140,7 @@ Ready to share your hard work? Head over to our official repo, read the contribu
 
 ## Join our Discord Community
 
-Come, gather round, fellow innovators! 🤩 I cordially invite you to connect with our dynamic tribe via this exclusive gateway to our Discord community: [https://discord.gg/UXT5frrf](https://discord.gg/UXT5frrf)
+Come, gather round, fellow innovators! 🤩 I cordially invite you to connect with our dynamic tribe via this exclusive gateway to our Discord community: https://discord.gg/FpTFX2k3
 
 Keep in mind, constructive criticism and thoughtful discussions only serve to strengthen our collective resolve. Hence, never shy away from sharing insights, posing questions, or indulging in insightful chats concerning Ssebowa AI.
 
