@@ -1,21 +1,56 @@
-MIT License
+ Title: SSEBOWA AI Project Licensed Under Apache License, Version 2.0
 
-Copyright (c) 2024 LibreChat
+---
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Welcome to the SSEBOWA AI project! We are excited to share our work with you and encourage collaboration and innovation. This project is licensed under the Apache License, Version 2.0. Please find the full text of the license below. By using, copying, modifying, merging, publishing, distributing, sublicensing, or otherwise exploiting the codebase, you agree to be bound by the following terms and conditions.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+**Apache License**
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Terms and Conditions for Use, Reproduction, and Distribution
+------------------------------------------------------------
+
+### 1. Definitions
+
+* **License:** These terms and conditions for use, reproduction, and distribution.
+* **Licensable Software:** The software distributed under this License.
+* **You:** An individual or legal entity exercising permissions granted by this License.
+* **Contribution:** New files that You create or existing files that You modify, adding to the substance of the project.
+* **Work:** The originally-created Files or the modified Files that You create or contribute.
+
+### 2. Grant of Copyright License
+
+Subject to the terms and conditions of this License, each Contributor grants You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare Derivative Works of, publicly display, publicly perform, sublicense, and distribute the Work and such derivative works in Source or Object form.
+
+### 3. Grant of Patent License
+
+Subject to the terms and conditions of this License, each Contributor grants You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the Work, where such license applies only to those patent claims licensable by such Contributor that are necessarily infringed by their Contribution(s) alone or by combination of their Contribution(s) with the Work to which such contribution is submitted.
+
+### 4. Redistribution
+
+You may reproduce and distribute copies of the Work or Derivative Works thereof in any medium, with or without modifications, and in Source or object form, provided you meet the following conditions:
+
+* Give appropriate credit to the original authors and the SSEBOWA AI team. Appropriate credit should include a clear attribution statement identifying us as the original authors and publishers, and a link to the project repository on GitHub.
+* If the Work includes a "NOTICE" file as described in Section 8, then it must be included in all copies or substantial portions of the Distribution.
+* All distributions of the Work or Derivative Works must include a copy of this Document, either standalone or as part of any other document filing accompanying the distribution.
+* If You modify this Document or any File(s), You must rename Your derivatives or remove a unique identifier specific to the Original Author, so that the names or identifiers of the Authors of the Original Work and Your Derivations do not lead others to believe that your Derivative Work is the original Work.
+* Provide a publicly accessible transparency report detailing all substantive modifications made to the original Work, indicating the name of each Developer who contributed to the derivation and a brief description of Their modifications.
+
+### 5. Contained Third-Party Notices
+
+If the Work contains third-party notices that describe permit terms (e.g., open source software licenses or permits), those permits apply to the corresponding parts of the Work. When You convey a copy of the Work, include a complete copy of the third-party notice, if applicable, along with Your contributions and this Document.
+
+### 6. Disclaimer of Warranty
+
+The Work is provided under this License "as is," Without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, title, freedom from contamination by malware or viruses, or non-infringement. Neither the original authors nor the SSEBOWA AI team offers any express or implied warranties, guarantees, or conditions. Some jurisdictions do not allow disclaimers of implied warranties, so some or all of these disclaimers may not apply to You.
+
+### 7. Limitation of Liability
+
+In no event will the original authors or the SSEBOWA AI team be liable for any damages whatsoever, including but not limited to any direct, indirect, special, incidental, or consequential damages, arising out of the use or inability to use the Work, even if they have been advised of the possibility of such damages. Some jurisdictions do not allow limitations on liability, so some or all of these limitations may not apply to You.
+
+### 8. Contact Information
+
+For questions about this License, please contact the SSEBOWA AI team at <contact@ssebowaai.com>.
+
+---
+
+By continuing to access or use the SSEBOWA AI project, You indicate that You have read, understood, and agreed to be bound by the above terms and conditions. Thank you for contributing to and collaborating on the SSEBOWA AI project!
