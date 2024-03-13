@@ -38,7 +38,7 @@ Imagine a harmonious convergence of brilliant minds, ingenious creations, and al
 
 <p align="">
   <a href="https://ssebowa.ai">
-    <img src="images/college.png" height="">
+    <img src="images/ssebowa_charity.jpg" height="">
   </a>
 </p>
 
