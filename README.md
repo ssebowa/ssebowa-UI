@@ -157,3 +157,7 @@ Above all else, honor our sacred code of conduct during interactions, whether on
 Thanks to you, Ssebowa AI surges ever closer to becoming a cornerstone of universally accessible generative AI. Kudos and gratitude overfloweth for your selflessness, wisdom, and camaraderie.
 
 Go forth, heroes! 🚀
+
+## 🤝 Credits
+
+Librechat.
