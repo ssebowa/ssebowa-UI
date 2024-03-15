@@ -1,4 +1,8 @@
-require('dotenv').config();
+const dotenvResult = require('dotenv').config();
+if (dotenvResult.error) {
+  console.error('.env error:', dotenvResult.error);
+}
+//console.log('.env loaded variables are:', dotenvResult.parsed);
 
 const crypto = require('crypto');
 const key = Buffer.from(process.env.CREDS_KEY, 'hex');
