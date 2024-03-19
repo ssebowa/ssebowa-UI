@@ -48,7 +48,7 @@ const App = () => {
       }, 100);
       const response = await axios.post('https://api5.ssebowa.chat/ssebowavlm', formData, {
         headers: {
-          'API-KEY': 'ssebowa_3a4b8f7c2e1d6a9b5d8c3e2f1a7b6e9',
+          'API-KEY': 'your_api_key',
         },
       });
       setTimeout(() => {
