@@ -2,7 +2,7 @@
 
 <p align="">
   <a href="https://ssebowa.ai">
-    <img src="images/cover.jpg" height="">
+    <img src="images/ssebowa_banner.jpg" height="">
   </a>
   <h1 align="center">
     <a href="https://librechat.ai">Ssebowa Ai</a>
