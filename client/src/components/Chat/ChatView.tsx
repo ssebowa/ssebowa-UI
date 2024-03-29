@@ -48,6 +48,7 @@ function ChatView({ index = 0 }: { index?: number }) {
       const mapRes = res.data.messages.map(message => {
         return {
           sentByUser: message.sender === 'User',
+          files: message.files,
           isImage: message.isImage,
           text: message.text
         }

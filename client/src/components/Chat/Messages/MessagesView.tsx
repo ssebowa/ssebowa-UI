@@ -10,15 +10,14 @@ import { cn } from '~/utils';
 import { TypeAnimation } from 'react-type-animation';
 import { ChatDataContext } from '~/App';
 import { useParams } from 'react-router-dom';
+import { ExtendedFile } from '~/common';
 
 export default function MessagesView({
   messagesTree: _messagesTree,
   Header,
 }: {
   // messagesTree?: TMessage[] | null;
-  messagesTree?: [
-    { sentByUser: boolean; text: string; isImage: boolean; file: { type: 'image'; url: 'string' } },
-  ];
+  messagesTree?: [{ sentByUser: boolean; text: string; isImage: boolean; files: ExtendedFile[] }];
   Header?: ReactNode;
 }) {
   const { screenshotTargetRef } = useScreenshot();
@@ -39,7 +38,7 @@ export default function MessagesView({
 
   useEffect(() => {
     // getConversation(conversationId)
-  }, []);
+  }, [_messagesTree]);
 
   return (
     <div className="flex-1 overflow-hidden overflow-y-auto">
@@ -143,8 +142,16 @@ export default function MessagesView({
                                       />
                                     ) : (
                                       <>
-                                        {item?.file && item.file.type === 'image' ? (
-                                          <img src={item?.file.url} className="my-2 rounded" />
+                                        {item?.files.length > 0 &&
+                                        item?.files?.[0].type?.includes('image') ? (
+                                          <img
+                                            src={
+                                              item?.files?.[0].source === 'local'
+                                                ? `${window.location.origin}${item.files?.[0].filepath}`
+                                                : item.files?.[0].filepath
+                                            }
+                                            className="my-2 rounded"
+                                          />
                                         ) : null}
                                         <div style={{ whiteSpace: 'pre-wrap' }}>{item?.text}</div>
                                       </>

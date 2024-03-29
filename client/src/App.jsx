@@ -58,10 +58,13 @@ const App = () => {
   const submitChatMessage = useCallback(async (data) => {
     const formData = new FormData();
     formData.append('prompt', data.text);
+    const fileListId = [];
+    const fileList = []
     data.files.forEach((file) => {
+      fileList.push(file)
+      fileListId.push(file._id)
       formData.append('image', file.file);
     });
-    const fileBlobUrl = formData.get('image') ? URL.createObjectURL(formData.get('image')) : null;
     try {
       setIsLoading(true);
       setSSbowaData((prevData) => [
@@ -69,14 +72,7 @@ const App = () => {
         {
           sentByUser: true,
           text: data?.text,
-          ...(fileBlobUrl
-            ? {
-                file: {
-                  type: 'image',
-                  url: fileBlobUrl,
-                },
-              }
-            : {}),
+          files: fileList,
         },
       ]);
       const user = localStorage.getItem('user');
@@ -85,6 +81,7 @@ const App = () => {
         sender: 'User',
         text: data?.text,
         user: userId,
+        files: fileListId,
       });
       const localConvId = localStorage.getItem('conversationId');
       let convMessage = { data: { _id: localConvId } };
@@ -96,7 +93,7 @@ const App = () => {
         });
         await fetchSsebowaConversations();
       }
-      // if(localConvId !== 'new'){
+      // if (localConvId !== 'new') {
       await axios.put(`/api/ssebowa/ssebowa-conversation/${convMessage.data._id}/messages`, {
         messages: resMessage.data._id,
       });
@@ -106,7 +103,7 @@ const App = () => {
         });
         await fetchSsebowaConversations();
       }
-      // }else{
+      // } else {
       //   convMessage = await axios.post('/api/ssebowa/ssebowa-conversation', { user: userId, title: data?.text.substring(0, 25), messages: [resMessage.data._id] })
       // }
       const includesSpecificWord = specificImageGenerationWords.some((word) =>

@@ -1,12 +1,18 @@
-import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
-import { FileSources } from 'librechat-data-provider';
-import type { ExtendedFile } from '~/common';
-import { useDragHelpers, useSetFilesToDelete } from '~/hooks';
-import DragDropOverlay from './Input/Files/DragDropOverlay';
-import { useDeleteFilesMutation } from '~/data-provider';
-import { SidePanel } from '~/components/SidePanel';
 import store from '~/store';
+import { useRecoilValue } from 'recoil';
+import { SidePanel } from '~/components/SidePanel';
+import DragDropOverlay from './Input/Files/DragDropOverlay';
+
+import {
+  useDragHelpers,
+  // useSetFilesToDelete
+} from '~/hooks';
+
+// Delete temporary files
+// import { useEffect } from 'react';
+// import type { ExtendedFile } from '~/common';
+// import { FileSources } from 'librechat-data-provider';
+// import { useDeleteFilesMutation } from '~/data-provider';
 
 export default function Presentation({
   children,
@@ -19,33 +25,33 @@ export default function Presentation({
 }) {
   const hideSidePanel = useRecoilValue(store.hideSidePanel);
   const { isOver, canDrop, drop } = useDragHelpers();
-  const setFilesToDelete = useSetFilesToDelete();
-  const { mutateAsync } = useDeleteFilesMutation({
-    onSuccess: () => {
-      console.log('Temporary Files deleted');
-      setFilesToDelete({});
-    },
-    onError: (error) => {
-      console.log('Error deleting temporary files:', error);
-    },
-  });
+  // const setFilesToDelete = useSetFilesToDelete();
+  // const { mutateAsync } = useDeleteFilesMutation({
+  //   onSuccess: () => {
+  //     console.log('Temporary Files deleted');
+  //     setFilesToDelete({});
+  //   },
+  //   onError: (error) => {
+  //     console.log('Error deleting temporary files:', error);
+  //   },
+  // });
 
-  useEffect(() => {
-    const filesToDelete = localStorage.getItem('filesToDelete');
-    const map = JSON.parse(filesToDelete ?? '{}') as Record<string, ExtendedFile>;
-    const files = Object.values(map)
-      .filter((file) => file.filepath)
-      .map((file) => ({
-        file_id: file.file_id,
-        filepath: file.filepath as string,
-        source: file.source as FileSources,
-      }));
+  // useEffect(() => {
+  //   const filesToDelete = localStorage.getItem('filesToDelete');
+  //   const map = JSON.parse(filesToDelete ?? '{}') as Record<string, ExtendedFile>;
+  //   const files = Object.values(map)
+  //     .filter((file) => file.filepath)
+  //     .map((file) => ({
+  //       file_id: file.file_id,
+  //       filepath: file.filepath as string,
+  //       source: file.source as FileSources,
+  //     }));
 
-    if (files.length === 0) {
-      return;
-    }
-    mutateAsync({ files });
-  }, [mutateAsync]);
+  //   if (files.length === 0) {
+  //     return;
+  //   }
+  //   mutateAsync({ files });
+  // }, [mutateAsync]);
 
   const isActive = canDrop && isOver;
   const resizableLayout = localStorage.getItem('react-resizable-panels:layout');

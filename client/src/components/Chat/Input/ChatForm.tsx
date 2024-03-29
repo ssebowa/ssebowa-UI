@@ -42,14 +42,17 @@ export default function ChatForm({ index = 0 }) {
   const endpoint = endpointType ?? _endpoint;
 
   async function handleSelectedFile(file: TFile) {
-    console.log(file);
-    console.log(`${window.location.origin}${file.filepath}`);
-    const response = await fetch(`${window.location.origin}${file.filepath}`);
+    const imgUrl =
+      file.source === 'local' ? `${window.location.origin}${file.filepath}` : file.filepath;
+    const response = await fetch(imgUrl);
     const blob = await response.blob();
     const fileBlob = new File([blob], file.filename, { type: file.type });
 
     const extendedFile: ExtendedFile = {
+      _id: file._id,
       file_id: file.file_id,
+      source: file.source,
+      filepath: file.filepath,
       file: fileBlob,
       type: file.type,
       preview: URL.createObjectURL(blob),

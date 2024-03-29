@@ -30,7 +30,7 @@ export default function SearchFileBubbleChat({
   useEffect(() => {
     const matchFileName = chatText.match(/^#$|^#([^\s][\w\s\-\.\,\!\@\$\%]*)$/);
     if (matchFileName) {
-      if (searchFiles.length !== 0) refetch();
+      refetch();
       setShowSelectFile(true);
       setFileQueryName(matchFileName[1] ?? '');
     } else {
