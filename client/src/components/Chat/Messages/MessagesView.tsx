@@ -16,7 +16,9 @@ export default function MessagesView({
   Header,
 }: {
   // messagesTree?: TMessage[] | null;
-  messagesTree?: [{ sentByUser: boolean; text: string; isImage: boolean }];
+  messagesTree?: [
+    { sentByUser: boolean; text: string; isImage: boolean; file: { type: 'image'; url: 'string' } },
+  ];
   Header?: ReactNode;
 }) {
   const { screenshotTargetRef } = useScreenshot();
@@ -33,12 +35,11 @@ export default function MessagesView({
   const { conversationId } = conversation ?? {};
   const { isLoading } = useContext(ChatDataContext);
 
-
-  const params = useParams()
+  const params = useParams();
 
   useEffect(() => {
     // getConversation(conversationId)
-  }, [])
+  }, []);
 
   return (
     <div className="flex-1 overflow-hidden overflow-y-auto">
@@ -141,7 +142,12 @@ export default function MessagesView({
                                         cursor={isLoading}
                                       />
                                     ) : (
-                                      <div style={{ whiteSpace: 'pre-wrap' }}>{item?.text}</div>
+                                      <>
+                                        {item?.file && item.file.type === 'image' ? (
+                                          <img src={item?.file.url} className="my-2 rounded" />
+                                        ) : null}
+                                        <div style={{ whiteSpace: 'pre-wrap' }}>{item?.text}</div>
+                                      </>
                                     )}
                                   </div>
                                 </div>

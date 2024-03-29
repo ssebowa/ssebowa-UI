@@ -10,6 +10,9 @@ import Textarea from './Textarea';
 import store from '~/store';
 import axios from 'axios';
 import { ChatDataContext } from '~/App';
+import { ExtendedFile } from '~/common';
+import type { TFile } from 'librechat-data-provider';
+import SearchFileBubbleChat from '~/components/Chat/Input/SearchFileBubbleChat';
 
 export default function ChatForm({ index = 0 }) {
   const [text, setText] = useRecoilState(store.textByIndex(index));
@@ -38,9 +41,33 @@ export default function ChatForm({ index = 0 }) {
   const { endpoint: _endpoint, endpointType } = conversation ?? { endpoint: '' };
   const endpoint = endpointType ?? _endpoint;
 
+  async function handleSelectedFile(file: TFile) {
+    console.log(file);
+    console.log(`${window.location.origin}${file.filepath}`);
+    const response = await fetch(`${window.location.origin}${file.filepath}`);
+    const blob = await response.blob();
+    const fileBlob = new File([blob], file.filename, { type: file.type });
+
+    const extendedFile: ExtendedFile = {
+      file_id: file.file_id,
+      file: fileBlob,
+      type: file.type,
+      preview: URL.createObjectURL(blob),
+      progress: 1,
+      size: fileBlob.size,
+    };
+
+    setFiles((currentFiles) => {
+      const updatedFiles = new Map(currentFiles);
+      updatedFiles.set(file.file_id, extendedFile);
+      return updatedFiles;
+    });
+  }
+
   useEffect(() => {
-    console.log('endppoint', endpoint, _endpoint)
-  }, [endpoint, _endpoint])
+    console.log('endppoint', endpoint, _endpoint);
+  }, [endpoint, _endpoint]);
+
   return (
     <form
       onSubmit={(e) => {
@@ -61,6 +88,17 @@ export default function ChatForm({ index = 0 }) {
                   {children}
                 </div>
               )}
+            />
+            <SearchFileBubbleChat
+              chatText={text}
+              onSelectFile={(file, queryName) => {
+                setText((prev) => {
+                  const replaceRegex = new RegExp(`${queryName}`, 'g');
+                  let updatedText = prev.replace(replaceRegex, '');
+                  return updatedText;
+                });
+                handleSelectedFile(file);
+              }}
             />
             {true && (
               <Textarea
