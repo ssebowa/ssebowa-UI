@@ -110,7 +110,7 @@ export default function ChatForm({ index = 0 }) {
                 onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setText(e.target.value)}
                 setText={setText}
                 submitMessage={sendMessage}
-                endpoint={endpoint}
+                endpoint={endpoint ?? ""}
                 endpointType={endpointType}
               />
             )}

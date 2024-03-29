@@ -1,18 +1,18 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 // import type { TMessage } from 'librechat-data-provider';
 import ScrollToBottom from '~/components/Messages/ScrollToBottom';
 import { useScreenshot, useMessageScrolling, useToast } from '~/hooks';
 import { CSSTransition } from 'react-transition-group';
-import MultiMessage from './MultiMessage';
-import MessageContent from './Content/MessageContent';
 import { cn } from '~/utils';
 import { TypeAnimation } from 'react-type-animation';
 import { ChatDataContext } from '~/App';
-import { useParams } from 'react-router-dom';
 import { ExtendedFile, NotificationSeverity } from '~/common';
 import { CopyIcon, EditIcon, ThumbsDownIcon, ThumbsUpIcon } from 'lucide-react';
 import { updateFeedbackMessageById } from '~/data-provider/axios';
+import Textarea from '~/components/Chat/Input/Textarea';
+import { useChatContext } from '~/Providers';
+import SubmitButton from '~/components/Input/SubmitButton';
 
 export default function MessagesView({
   messagesTree: _messagesTree,
@@ -36,6 +36,11 @@ export default function MessagesView({
     item: -1,
     hover: false,
   });
+  const [editMessage, setEditMessage] = useState({
+    idx: -1,
+    enable: false,
+    message: '',
+  });
 
   const { showToast } = useToast();
   const {
@@ -47,11 +52,14 @@ export default function MessagesView({
     debouncedHandleScroll,
   } = useMessageScrolling(_messagesTree);
   const { conversationId } = conversation ?? {};
-  const { setSSbowaData, isLoading } = useContext(ChatDataContext);
+  const { updateChatMessage, setSSbowaData, isLoading } = useContext(ChatDataContext);
 
   useEffect(() => {
     // getConversation(conversationId)
   }, [_messagesTree]);
+
+  const { endpoint: _endpoint, endpointType } = conversation ?? { endpoint: '' };
+  const endpoint = endpointType ?? _endpoint;
 
   const handleCopyClick = (textToCopy: string) => {
     // For modern browsers
@@ -98,6 +106,46 @@ export default function MessagesView({
         });
       });
     }
+  };
+
+  const handleSubmitEditMessage = async () => {
+    const message = _messagesTree?.[editMessage.idx];
+    const fileMap = new Map();
+    const getAllFile = message?.files?.map(async (file) => {
+      const imgUrl =
+        file.source === 'local' ? `${window.location.origin}${file.filepath}` : file.filepath;
+      if (!imgUrl) return;
+      const response = await fetch(imgUrl);
+      const blob = await response.blob();
+      const fileBlob = new File([blob], file.filename ?? '', { type: file.type });
+
+      const extendedFile: ExtendedFile = {
+        _id: file._id,
+        file_id: file.file_id,
+        source: file.source,
+        filepath: file.filepath,
+        file: fileBlob,
+        type: file.type,
+        preview: URL.createObjectURL(blob),
+        progress: 1,
+        size: fileBlob.size,
+      };
+      fileMap.set(file.file_id, extendedFile);
+    });
+    if (getAllFile) {
+      await Promise.all(getAllFile)
+    }
+    updateChatMessage({
+      messageId: message?.messageId ?? '',
+      text: editMessage.message,
+      files: fileMap,
+      answerId: _messagesTree?.[editMessage.idx + 1]?.messageId ?? '',
+    });
+    setEditMessage({
+      idx: -1,
+      enable: false,
+      message: '',
+    });
   };
 
   return (
@@ -189,9 +237,16 @@ export default function MessagesView({
                                     className={`
                                       duration-[1000ms] -mx-4 mt-2 flex max-w-full 
                                       flex-grow flex-col gap-0 rounded-xl 
-                                      px-4 py-3 transition-all
-                                      ease-in hover:scale-[1.002]
-                                      hover:shadow-[0_0_10px_5px_rgba(0,0,0,0.10)]
+                                      px-4 py-3 transition-all ease-in
+                                      ${
+                                        editMessage.idx === idx && editMessage.enable
+                                          ? `scale-[1.002]
+                                             shadow-[0_0_10px_5px_rgba(0,0,0,0.10)]
+                                            `
+                                          : `hover:scale-[1.002]
+                                             hover:shadow-[0_0_10px_5px_rgba(0,0,0,0.10)]
+                                            `
+                                      }
                                     `}
                                     onMouseEnter={() =>
                                       setContainerMessageHovering({
@@ -222,7 +277,7 @@ export default function MessagesView({
                                       />
                                     ) : (
                                       <>
-                                        {item?.files.length > 0 &&
+                                        {item?.files?.length > 0 &&
                                         item?.files?.[0].type?.includes('image') ? (
                                           <img
                                             src={
@@ -233,76 +288,136 @@ export default function MessagesView({
                                             className="my-2 mb-4 rounded"
                                           />
                                         ) : null}
-                                        <div style={{ whiteSpace: 'pre-wrap' }}>{item?.text}</div>
+                                        {editMessage.idx === idx && editMessage.enable ? (
+                                          <Textarea
+                                            value={editMessage.message}
+                                            disabled={false}
+                                            onChange={(e) =>
+                                              setEditMessage({
+                                                ...editMessage,
+                                                message: e.target.value,
+                                              })
+                                            }
+                                            submitMessage={() => {}}
+                                            setText={(value) =>
+                                              setEditMessage({
+                                                ...editMessage,
+                                                message: value as string,
+                                              })
+                                            }
+                                            endpoint={endpoint ?? ''}
+                                            endpointType={endpointType}
+                                            extendedClassname="!ml-[-55px] !pr-[0]"
+                                          />
+                                        ) : (
+                                          <div style={{ whiteSpace: 'pre-wrap' }}>{item?.text}</div>
+                                        )}
                                       </>
                                     )}
-                                    <div
-                                      className={
-                                        idx === containerMessageHovering.item &&
-                                        containerMessageHovering.hover
-                                          ? 'pointer-events-auto mt-1 opacity-100'
-                                          : 'pointer-events-none mt-1 opacity-0'
-                                      }
-                                    >
-                                      {!item?.isImage ? (
-                                        <div
-                                          className="inline-flex px-1 pt-1"
+                                    {editMessage.idx === idx && editMessage.enable ? (
+                                      <div className="mt-3 flex h-full justify-center gap-x-2">
+                                        <button
+                                          className={`
+                                          font-reguler rounded-md bg-green-500 
+                                          px-3 py-1.5 text-sm text-white hover:bg-green-600
+                                        `}
+                                          onClick={handleSubmitEditMessage}
+                                        >
+                                          Save & Submit
+                                        </button>
+                                        <button
+                                          className={`
+                                          font-reguler rounded-md border-[1px] border-red-500 bg-transparent 
+                                          px-3 py-1.5 text-sm text-white hover:border-transparent 
+                                          hover:bg-red-500
+                                        `}
                                           onClick={() => {
-                                            handleCopyClick(item?.text);
+                                            setEditMessage({
+                                              idx: -1,
+                                              enable: false,
+                                              message: '',
+                                            });
                                           }}
                                         >
-                                          <CopyIcon
-                                            size={18}
-                                            className="duration-[500ms] stroke-gray-400 transition-all hover:stroke-white"
-                                          />
-                                        </div>
-                                      ) : null}
-                                      {item?.sentByUser ? (
-                                        <div className="inline-flex px-1 pt-1">
-                                          <EditIcon
-                                            size={18}
-                                            className="duration-[500ms] stroke-gray-400 transition-all hover:stroke-white"
-                                          />
-                                        </div>
-                                      ) : (
-                                        <>
+                                          Cancel
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <div
+                                        className={
+                                          idx === containerMessageHovering.item &&
+                                          containerMessageHovering.hover
+                                            ? 'pointer-events-auto mt-1 opacity-100'
+                                            : 'pointer-events-none mt-1 opacity-0'
+                                        }
+                                      >
+                                        {!item?.isImage ? (
                                           <div
                                             className="inline-flex px-1 pt-1"
-                                            onClick={() =>
-                                              handleOnClickFeedback(item?.messageId, 'positive')
-                                            }
+                                            onClick={() => {
+                                              handleCopyClick(item?.text);
+                                            }}
                                           >
-                                            <ThumbsUpIcon
+                                            <CopyIcon
                                               size={18}
-                                              className={`
-                                              duration-[500ms] stroke-gray-400 transition-all 
-                                              hover:stroke-white ${
-                                                item?.feedback === 'positive'
-                                                  ? 'stroke-green-500'
-                                                  : ''
-                                              }`}
+                                              className="duration-[500ms] stroke-gray-400 transition-all hover:stroke-white"
                                             />
                                           </div>
+                                        ) : null}
+                                        {item?.sentByUser ? (
                                           <div
                                             className="inline-flex px-1 pt-1"
-                                            onClick={() =>
-                                              handleOnClickFeedback(item?.messageId, 'negative')
-                                            }
+                                            onClick={() => {
+                                              setEditMessage({
+                                                idx,
+                                                enable: true,
+                                                message: _messagesTree?.[idx]?.text ?? '',
+                                              });
+                                            }}
                                           >
-                                            <ThumbsDownIcon
+                                            <EditIcon
                                               size={18}
-                                              className={`
-                                              duration-[500ms] stroke-gray-400 transition-all 
-                                              hover:stroke-white ${
-                                                item?.feedback === 'negative'
-                                                  ? 'stroke-red-500'
-                                                  : ''
-                                              }`}
+                                              className="duration-[500ms] stroke-gray-400 transition-all hover:stroke-white"
                                             />
                                           </div>
-                                        </>
-                                      )}
-                                    </div>
+                                        ) : (
+                                          <>
+                                            <div
+                                              className="inline-flex px-1 pt-1"
+                                              onClick={() =>
+                                                handleOnClickFeedback(item?.messageId, 'positive')
+                                              }
+                                            >
+                                              <ThumbsUpIcon
+                                                size={18}
+                                                className={`
+                                                  duration-[500ms] transition-all ${
+                                                    item?.feedback === 'positive'
+                                                      ? 'stroke-green-500'
+                                                      : 'stroke-gray-400 hover:stroke-white'
+                                                  }`}
+                                              />
+                                            </div>
+                                            <div
+                                              className="inline-flex px-1 pt-1"
+                                              onClick={() =>
+                                                handleOnClickFeedback(item?.messageId, 'negative')
+                                              }
+                                            >
+                                              <ThumbsDownIcon
+                                                size={18}
+                                                className={`
+                                                  duration-[500ms] transition-all ${
+                                                    item?.feedback === 'negative'
+                                                      ? 'stroke-red-500'
+                                                      : 'stroke-gray-400 hover:stroke-white'
+                                                  }`}
+                                              />
+                                            </div>
+                                          </>
+                                        )}
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               </div>

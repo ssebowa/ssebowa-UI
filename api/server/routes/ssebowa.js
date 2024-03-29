@@ -125,11 +125,11 @@ router.get('/ssebowa-message', async (req, res) => {
 // Update a message
 router.put('/ssebowa-message/:id', async (req, res) => {
   const { id } = req.params;
-  const { sender, text, user } = req.body;
+  const { sender, text, user, feedback, isImage } = req.body;
   try {
     const message = await SsebowaMessage.findByIdAndUpdate(
       id,
-      { sender, text, user },
+      { sender, text, user, feedback, isImage },
       { new: true },
     );
     res.send(message);
@@ -144,7 +144,7 @@ router.put('/ssebowa-message/:id/feedback', async (req, res) => {
   const { id } = req.params;
   const { feedback } = req.body;
   try {
-    const message = await SsebowaMessage.findByIdAndUpdate(id, { feedback });
+    const message = await SsebowaMessage.findByIdAndUpdate(id, { feedback }, { new: true });
     res.send(message);
   } catch (error) {
     console.error(error);

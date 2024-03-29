@@ -120,6 +120,7 @@ const App = () => {
           },
         ]);
       }, 100);
+      formData.append('convid', convMessage.data._id)
       const response = await axios.post('https://api5.ssebowa.chat/ssebowavlm', formData, {
         headers: {
           'API-KEY': 'ssebowa_3a4b8f7c2e1d6a9b5d8c3e2f1a7b6e9',
@@ -154,6 +155,70 @@ const App = () => {
     }
   }, []);
 
+  const updateChatMessage = useCallback(async (data) => {
+    const formData = new FormData();
+    formData.append('prompt', data.text);
+    data.files.forEach((file) => {
+      formData.append('image', file.file);
+    });
+    try {
+      setIsLoading(true);
+      setSSbowaData((prevData) => {
+        const newData = [...prevData];
+        const index = newData.findIndex((item) => item.messageId === data.messageId);
+        newData[index].text = data.text;
+        return newData;
+      });
+      await axios.put(`/api/ssebowa/ssebowa-message/${data.messageId}`, {
+        text: data?.text,
+      });
+      const includesSpecificWord = specificImageGenerationWords.some((word) =>
+        data?.text?.toLowerCase().includes(word),
+      );
+      setTimeout(() => {
+        setSSbowaData((prevData) => {
+          const newData = [...prevData];
+          const index = newData.findIndex((item) => item.messageId === data.answerId);
+          newData[index] = {
+            sentByUser: false,
+            isImage: false,
+            text: includesSpecificWord ? 'Please wait a minute, the image will soon appear' : '',
+          };
+          return newData;
+        });
+      }, 100);
+      const localConvId = localStorage.getItem('conversationId');
+      let convMessage = { data: { _id: localConvId } };
+      formData.append('convid', convMessage.data._id)
+      const response = await axios.post('https://api5.ssebowa.chat/ssebowavlm', formData, {
+        headers: {
+          'API-KEY': 'ssebowa_3a4b8f7c2e1d6a9b5d8c3e2f1a7b6e9',
+        },
+      });
+      const resMessage2 = await axios.put(`/api/ssebowa/ssebowa-message/${data.answerId}`, {
+        text: response?.data,
+        isImage: includesSpecificWord,
+        feedback: null
+      });
+      setSSbowaData((prevData) => {
+        const newData = [...prevData];
+        const index = newData.findIndex((item) => item.messageId === data.messageId);
+        newData.splice(index + 1, 0, {
+          sentByUser: false,
+          text: response?.data,
+          isImage: includesSpecificWord,
+          messageId: resMessage2.data._id,
+          feedback: resMessage2.data.feedback,
+        });
+        return newData;
+      });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const user = localStorage.getItem('user');
   const userId = user ? JSON.parse(user).id : '';
 
@@ -175,6 +240,7 @@ const App = () => {
                 <ChatDataContext.Provider
                   value={{
                     submitChatMessage,
+                    updateChatMessage,
                     ssebowaData,
                     setSSbowaData,
                     isLoading,
