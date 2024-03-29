@@ -21,8 +21,9 @@ router.post('/ssebowa-conversation', async (req, res) => {
 router.get('/ssebowa-conversation', async (req, res) => {
   try {
     const { id } = req.query;
-    console.log('id', id)
-    const conversations = await SsebowaConversation.find({ user: id }).sort({ createdAt: -1 }).populate('messages');
+    const conversations = await SsebowaConversation.find({ user: id })
+      .sort({ createdAt: -1 })
+      .populate('messages');
     res.send(conversations);
   } catch (error) {
     console.error(error);
@@ -38,8 +39,8 @@ router.get('/ssebowa-conversation/:id', async (req, res) => {
       path: 'messages',
       populate: {
         path: 'files',
-        model: 'File'
-      } 
+        model: 'File',
+      },
     });
     res.send(conversation);
   } catch (error) {
@@ -54,7 +55,11 @@ router.put('/ssebowa-conversation/:id', async (req, res) => {
   const { user, title, messages } = req.body;
 
   try {
-    const conversation = await SsebowaConversation.findByIdAndUpdate(id, { user, title, messages }, { new: true });
+    const conversation = await SsebowaConversation.findByIdAndUpdate(
+      id,
+      { user, title, messages },
+      { new: true },
+    );
     res.send(conversation);
   } catch (error) {
     console.error(error);
@@ -68,7 +73,11 @@ router.put('/ssebowa-conversation/:id/messages', async (req, res) => {
   const { messages } = req.body;
 
   try {
-    const conversation = await SsebowaConversation.findByIdAndUpdate(id, { $push: { messages: messages } }, { new: true });
+    const conversation = await SsebowaConversation.findByIdAndUpdate(
+      id,
+      { $push: { messages: messages } },
+      { new: true },
+    );
     res.send(conversation);
   } catch (error) {
     console.error(error);
@@ -92,9 +101,8 @@ router.delete('/ssebowa-conversation/:id', async (req, res) => {
 // Create a new message
 router.post('/ssebowa-message', async (req, res) => {
   const { sender, text, user, files, isImage } = req.body;
-
   try {
-    const message = new SsebowaMessage({ sender, text, user, files, isImage });
+    const message = new SsebowaMessage({ sender, text, user, files, isImage, feedback: null });
     await message.save();
     res.send(message);
   } catch (error) {
@@ -118,9 +126,25 @@ router.get('/ssebowa-message', async (req, res) => {
 router.put('/ssebowa-message/:id', async (req, res) => {
   const { id } = req.params;
   const { sender, text, user } = req.body;
-
   try {
-    const message = await SsebowaMessage.findByIdAndUpdate(id, { sender, text, user }, { new: true });
+    const message = await SsebowaMessage.findByIdAndUpdate(
+      id,
+      { sender, text, user },
+      { new: true },
+    );
+    res.send(message);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error);
+  }
+});
+
+// Update a feedback
+router.put('/ssebowa-message/:id/feedback', async (req, res) => {
+  const { id } = req.params;
+  const { feedback } = req.body;
+  try {
+    const message = await SsebowaMessage.findByIdAndUpdate(id, { feedback });
     res.send(message);
   } catch (error) {
     console.error(error);

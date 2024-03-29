@@ -59,22 +59,14 @@ const App = () => {
     const formData = new FormData();
     formData.append('prompt', data.text);
     const fileListId = [];
-    const fileList = []
+    const fileList = [];
     data.files.forEach((file) => {
-      fileList.push(file)
-      fileListId.push(file._id)
+      fileList.push(file);
+      fileListId.push(file._id);
       formData.append('image', file.file);
     });
     try {
       setIsLoading(true);
-      setSSbowaData((prevData) => [
-        ...prevData,
-        {
-          sentByUser: true,
-          text: data?.text,
-          files: fileList,
-        },
-      ]);
       const user = localStorage.getItem('user');
       const userId = user ? JSON.parse(user).id : '';
       const resMessage = await axios.post('/api/ssebowa/ssebowa-message', {
@@ -83,6 +75,15 @@ const App = () => {
         user: userId,
         files: fileListId,
       });
+      setSSbowaData((prevData) => [
+        ...prevData,
+        {
+          files: fileList,
+          text: data?.text,
+          sentByUser: true,
+          messageId: resMessage.data._id,
+        },
+      ]);
       const localConvId = localStorage.getItem('conversationId');
       let convMessage = { data: { _id: localConvId } };
       if (localConvId === 'new') {
@@ -125,20 +126,22 @@ const App = () => {
         },
       });
       setTimeout(async () => {
-        setSSbowaData((prevData) => [
-          ...prevData,
-          {
-            sentByUser: false,
-            isImage: includesSpecificWord,
-            text: response?.data,
-          },
-        ]);
         const resMessage2 = await axios.post('/api/ssebowa/ssebowa-message', {
           sender: 'SsebowaAI',
           text: response?.data,
           user: userId,
           isImage: includesSpecificWord,
         });
+        setSSbowaData((prevData) => [
+          ...prevData,
+          {
+            sentByUser: false,
+            text: response?.data,
+            isImage: includesSpecificWord,
+            messageId: resMessage2.data._id,
+            feedback: resMessage2.data.feedback,
+          },
+        ]);
         const convMessage2 = await axios.put(
           `/api/ssebowa/ssebowa-conversation/${convMessage.data._id}/messages`,
           { messages: resMessage2.data._id },

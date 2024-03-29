@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 // import type { TMessage } from 'librechat-data-provider';
 import ScrollToBottom from '~/components/Messages/ScrollToBottom';
-import { useScreenshot, useMessageScrolling } from '~/hooks';
+import { useScreenshot, useMessageScrolling, useToast } from '~/hooks';
 import { CSSTransition } from 'react-transition-group';
 import MultiMessage from './MultiMessage';
 import MessageContent from './Content/MessageContent';
@@ -10,19 +10,34 @@ import { cn } from '~/utils';
 import { TypeAnimation } from 'react-type-animation';
 import { ChatDataContext } from '~/App';
 import { useParams } from 'react-router-dom';
-import { ExtendedFile } from '~/common';
+import { ExtendedFile, NotificationSeverity } from '~/common';
+import { CopyIcon, EditIcon, ThumbsDownIcon, ThumbsUpIcon } from 'lucide-react';
+import { updateFeedbackMessageById } from '~/data-provider/axios';
 
 export default function MessagesView({
   messagesTree: _messagesTree,
   Header,
 }: {
   // messagesTree?: TMessage[] | null;
-  messagesTree?: [{ sentByUser: boolean; text: string; isImage: boolean; files: ExtendedFile[] }];
+  messagesTree?: [
+    {
+      messageId: string;
+      feedback: 'positive' | 'negative';
+      sentByUser: boolean;
+      text: string;
+      isImage: boolean;
+      files: ExtendedFile[];
+    },
+  ];
   Header?: ReactNode;
 }) {
   const { screenshotTargetRef } = useScreenshot();
-  const [currentEditId, setCurrentEditId] = useState<number | string | null>(-1);
+  const [containerMessageHovering, setContainerMessageHovering] = useState({
+    item: -1,
+    hover: false,
+  });
 
+  const { showToast } = useToast();
   const {
     conversation,
     scrollableRef,
@@ -32,13 +47,58 @@ export default function MessagesView({
     debouncedHandleScroll,
   } = useMessageScrolling(_messagesTree);
   const { conversationId } = conversation ?? {};
-  const { isLoading } = useContext(ChatDataContext);
-
-  const params = useParams();
+  const { setSSbowaData, isLoading } = useContext(ChatDataContext);
 
   useEffect(() => {
     // getConversation(conversationId)
   }, [_messagesTree]);
+
+  const handleCopyClick = (textToCopy: string) => {
+    // For modern browsers
+    if (navigator.clipboard) {
+      navigator.clipboard
+        .writeText(textToCopy)
+        .then(() =>
+          showToast({
+            message: 'Text copied to clipboard',
+            severity: NotificationSeverity.SUCCESS,
+          }),
+        )
+        .catch((error) => {
+          showToast({
+            message: 'Error copying text to clipboard',
+            severity: NotificationSeverity.ERROR,
+          });
+          console.error('Error copying text:', error);
+        });
+    } else {
+      // For older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = textToCopy;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      showToast({
+        message: 'Text copied to clipboard',
+        severity: NotificationSeverity.SUCCESS,
+      });
+    }
+  };
+
+  const handleOnClickFeedback = async (messageId: string, feedback: 'positive' | 'negative') => {
+    const response = await updateFeedbackMessageById(messageId, { feedback });
+    if (response.status === 200) {
+      setSSbowaData((prev) => {
+        return prev.map((msg) => {
+          if (msg.messageId === messageId) {
+            return { ...msg, feedback };
+          }
+          return msg;
+        });
+      });
+    }
+  };
 
   return (
     <div className="flex-1 overflow-hidden overflow-y-auto">
@@ -125,7 +185,27 @@ export default function MessagesView({
                                   {item?.sentByUser ? 'You' : 'SsebowaAI'}
                                 </div>
                                 <div className="flex-col gap-1 md:gap-3">
-                                  <div className="flex max-w-full flex-grow flex-col gap-0">
+                                  <div
+                                    className={`
+                                      duration-[1000ms] -mx-4 mt-2 flex max-w-full 
+                                      flex-grow flex-col gap-0 rounded-xl 
+                                      px-4 py-3 transition-all
+                                      ease-in hover:scale-[1.002]
+                                      hover:shadow-[0_0_10px_5px_rgba(0,0,0,0.10)]
+                                    `}
+                                    onMouseEnter={() =>
+                                      setContainerMessageHovering({
+                                        item: idx,
+                                        hover: true,
+                                      })
+                                    }
+                                    onMouseLeave={() =>
+                                      setContainerMessageHovering({
+                                        item: idx,
+                                        hover: false,
+                                      })
+                                    }
+                                  >
                                     {item?.isImage ? (
                                       <img
                                         src={item?.text}
@@ -150,12 +230,79 @@ export default function MessagesView({
                                                 ? `${window.location.origin}${item.files?.[0].filepath}`
                                                 : item.files?.[0].filepath
                                             }
-                                            className="my-2 rounded"
+                                            className="my-2 mb-4 rounded"
                                           />
                                         ) : null}
                                         <div style={{ whiteSpace: 'pre-wrap' }}>{item?.text}</div>
                                       </>
                                     )}
+                                    <div
+                                      className={
+                                        idx === containerMessageHovering.item &&
+                                        containerMessageHovering.hover
+                                          ? 'pointer-events-auto mt-1 opacity-100'
+                                          : 'pointer-events-none mt-1 opacity-0'
+                                      }
+                                    >
+                                      {!item?.isImage ? (
+                                        <div
+                                          className="inline-flex px-1 pt-1"
+                                          onClick={() => {
+                                            handleCopyClick(item?.text);
+                                          }}
+                                        >
+                                          <CopyIcon
+                                            size={18}
+                                            className="duration-[500ms] stroke-gray-400 transition-all hover:stroke-white"
+                                          />
+                                        </div>
+                                      ) : null}
+                                      {item?.sentByUser ? (
+                                        <div className="inline-flex px-1 pt-1">
+                                          <EditIcon
+                                            size={18}
+                                            className="duration-[500ms] stroke-gray-400 transition-all hover:stroke-white"
+                                          />
+                                        </div>
+                                      ) : (
+                                        <>
+                                          <div
+                                            className="inline-flex px-1 pt-1"
+                                            onClick={() =>
+                                              handleOnClickFeedback(item?.messageId, 'positive')
+                                            }
+                                          >
+                                            <ThumbsUpIcon
+                                              size={18}
+                                              className={`
+                                              duration-[500ms] stroke-gray-400 transition-all 
+                                              hover:stroke-white ${
+                                                item?.feedback === 'positive'
+                                                  ? 'stroke-green-500'
+                                                  : ''
+                                              }`}
+                                            />
+                                          </div>
+                                          <div
+                                            className="inline-flex px-1 pt-1"
+                                            onClick={() =>
+                                              handleOnClickFeedback(item?.messageId, 'negative')
+                                            }
+                                          >
+                                            <ThumbsDownIcon
+                                              size={18}
+                                              className={`
+                                              duration-[500ms] stroke-gray-400 transition-all 
+                                              hover:stroke-white ${
+                                                item?.feedback === 'negative'
+                                                  ? 'stroke-red-500'
+                                                  : ''
+                                              }`}
+                                            />
+                                          </div>
+                                        </>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
                               </div>

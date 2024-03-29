@@ -30,54 +30,60 @@ function ChatView({ index = 0 }: { index?: number }) {
     enabled: !!fileMap,
   });
 
-  const [isLoading, setIsLoading] = useState(false)
-  
-  const { ssebowaData, ssebowaConversations, fetchSsebowaConversation, setSSbowaData, setConvId } = useContext(ChatDataContext);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { ssebowaData, ssebowaConversations, fetchSsebowaConversation, setSSbowaData, setConvId } =
+    useContext(ChatDataContext);
   // const [cloneSsebowaData, setCloneSsebowaData] = useState([])
 
   // useEffect(() => {
   //   setCloneSsebowaData(ssebowaData)
   // }, [ssebowaData])
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const getConversation = useCallback(async (id) => {
     try {
-      setIsLoading(true)
-      const res = await fetchSsebowaConversation(id)
-      const mapRes = res.data.messages.map(message => {
+      setIsLoading(true);
+      const res = await fetchSsebowaConversation(id);
+      const mapRes = res.data.messages.map((message) => {
         return {
           sentByUser: message.sender === 'User',
           files: message.files,
           isImage: message.isImage,
-          text: message.text
-        }
-      })
-      if(ssebowaData.length === 0 || !ssebowaData.some(r=> mapRes.map(r2 => JSON.stringify(r2)).includes(JSON.stringify(r)))){
+          text: message.text,
+          feedback: message.feedback,
+          messageId: message._id,
+        };
+      });
+      if (
+        ssebowaData.length === 0 ||
+        !ssebowaData.some((r) => mapRes.map((r2) => JSON.stringify(r2)).includes(JSON.stringify(r)))
+      ) {
         setSSbowaData((prevData) => [...prevData, ...mapRes]);
       }
-    }catch(err){
-      console.log(err)
-      navigate('/c/new')
-    }finally{
-      setIsLoading(false)
+    } catch (err) {
+      console.log(err);
+      navigate('/c/new');
+    } finally {
+      setIsLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    setConvId(conversationId)
-    const oldConversationId = localStorage.getItem('conversationId')
-    if(conversationId !== oldConversationId){
-      setSSbowaData([])
+    setConvId(conversationId);
+    const oldConversationId = localStorage.getItem('conversationId');
+    if (conversationId !== oldConversationId) {
+      setSSbowaData([]);
     }
-    localStorage.setItem('conversationId', conversationId || '')
-    if(conversationId !== 'new') {
-      getConversation(conversationId)
-    }else{
-      setSSbowaData([])
+    localStorage.setItem('conversationId', conversationId || '');
+    if (conversationId !== 'new') {
+      getConversation(conversationId);
+    } else {
+      setSSbowaData([]);
     }
-  }, [conversationId])
-  
+  }, [conversationId]);
+
   const chatHelpers = useChatHelpers(index, conversationId);
   return (
     <ChatContext.Provider value={chatHelpers}>

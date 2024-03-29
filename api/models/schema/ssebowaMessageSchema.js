@@ -28,6 +28,10 @@ const ssebowaMessageSchema = mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now
+  },
+  feedback: {
+    type: String,
+    default: null
   }
 })
 
