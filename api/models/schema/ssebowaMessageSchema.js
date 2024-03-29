@@ -13,6 +13,10 @@ const ssebowaMessageSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
+  files: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'File',
+  },
   isImage: {
     type: Boolean,
     default: false,

@@ -34,7 +34,13 @@ router.get('/ssebowa-conversation', async (req, res) => {
 router.get('/ssebowa-conversation/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const conversation = await SsebowaConversation.findById(id).populate('messages');
+    const conversation = await SsebowaConversation.findById(id).populate({
+      path: 'messages',
+      populate: {
+        path: 'files',
+        model: 'File'
+      } 
+    });
     res.send(conversation);
   } catch (error) {
     console.error(error);
@@ -85,10 +91,10 @@ router.delete('/ssebowa-conversation/:id', async (req, res) => {
 
 // Create a new message
 router.post('/ssebowa-message', async (req, res) => {
-  const { sender, text, user, isImage } = req.body;
+  const { sender, text, user, files, isImage } = req.body;
 
   try {
-    const message = new SsebowaMessage({ sender, text, user, isImage });
+    const message = new SsebowaMessage({ sender, text, user, files, isImage });
     await message.save();
     res.send(message);
   } catch (error) {
