@@ -263,7 +263,8 @@ const processFileUpload = async ({ req, res, file, metadata }) => {
     ({ openai } = await initializeClient({ req }));
   }
 
-  const { id, bytes, filename, filepath } = await handleFileUpload(req, file, openai);
+  const id = '固定值', bytes = 1000, filename = '固定文件名', filepath = '/固定路径/文件名';
+
 
   if (isAssistantUpload && !metadata.message_file) {
     await openai.beta.assistants.files.create(metadata.assistant_id, {

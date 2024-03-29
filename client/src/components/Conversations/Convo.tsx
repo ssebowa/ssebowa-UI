@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
-import { useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useState, useRef, useEffect, useContext } from 'react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { EModelEndpoint } from 'librechat-data-provider';
 import { useGetEndpointsQuery } from 'librechat-data-provider/react-query';
 import type { MouseEvent, FocusEvent, KeyboardEvent } from 'react';
@@ -13,6 +13,8 @@ import DeleteButton from './DeleteButton';
 import { getEndpointField } from '~/utils';
 import RenameButton from './RenameButton';
 import store from '~/store';
+import axios from 'axios';
+import { ChatDataContext } from '~/App';
 
 type KeyEvent = KeyboardEvent<HTMLInputElement>;
 
@@ -72,26 +74,29 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
     }, 25);
   };
 
-  const onRename = (e: MouseEvent<HTMLButtonElement> | FocusEvent<HTMLInputElement> | KeyEvent) => {
+  const { fetchSsebowaConversations } = useContext(ChatDataContext);
+  const onRename = async (e: MouseEvent<HTMLButtonElement> | FocusEvent<HTMLInputElement> | KeyEvent) => {
     e.preventDefault();
     setRenaming(false);
     if (titleInput === title) {
       return;
     }
-    updateConvoMutation.mutate(
-      { conversationId, title: titleInput },
-      {
-        onSuccess: () => refreshConversations(),
-        onError: () => {
-          setTitleInput(title);
-          showToast({
-            message: 'Failed to rename conversation',
-            severity: NotificationSeverity.ERROR,
-            showIcon: true,
-          });
-        },
-      },
-    );
+    await axios.put(`/api/ssebowa/ssebowa-conversation/${conversation._id}`, { title: titleInput })
+    fetchSsebowaConversations()
+    // updateConvoMutation.mutate(
+    //   { conversationId, title: titleInput },
+    //   {
+    //     onSuccess: () => refreshConversations(),
+    //     onError: () => {
+    //       setTitleInput(title);
+    //       showToast({
+    //         message: 'Failed to rename conversation',
+    //         severity: NotificationSeverity.ERROR,
+    //         showIcon: true,
+    //       });
+    //     },
+    //   },
+    // );
   };
 
   const icon = MinimalIcon({
@@ -121,19 +126,18 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
   };
 
   const activeConvo =
-    currentConvoId === conversationId ||
-    (isLatestConvo && currentConvoId === 'new' && activeConvos[0] && activeConvos[0] !== 'new');
+    currentConvoId === conversation._id;
 
-  if (!activeConvo) {
+  if (conversation._id !== currentConvoId) {
     aProps.className =
       'group relative rounded-lg active:opacity-50 flex cursor-pointer items-center mt-2 gap-3 break-all rounded-lg py-2 px-2 hover:bg-gray-200 dark:hover:bg-gray-800';
   }
 
   return (
-    <a
-      href={`/c/${conversationId}`}
+    <Link
+      to={`/c/${conversation._id}`}
       data-testid="convo-item"
-      onClick={clickHandler}
+      // onClick={() => navigate(`/c/${conversation._id}`)}
       {...aProps}
       title={title}
     >
@@ -166,7 +170,7 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
         <div className="visible absolute right-1 z-10 flex text-gray-400">
           <RenameButton renaming={renaming} onRename={onRename} renameHandler={renameHandler} />
           <DeleteButton
-            conversationId={conversationId}
+            conversationId={conversation._id}
             retainView={retainView}
             renaming={renaming}
             title={title}
@@ -175,6 +179,6 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
       ) : (
         <div className="absolute bottom-0 right-0 top-0 w-20 rounded-lg bg-gradient-to-l from-gray-50 from-0% to-transparent group-hover:from-gray-50  dark:from-gray-900 dark:group-hover:from-gray-900" />
       )}
-    </a>
+    </Link>
   );
 }

@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { QueryKeys } from 'librechat-data-provider';
 import { useQueryClient } from '@tanstack/react-query';
 import type { TMessage } from 'librechat-data-provider';
@@ -7,6 +7,9 @@ import { useDeleteConversationMutation } from '~/data-provider';
 import { Dialog, DialogTrigger, Label } from '~/components/ui';
 import DialogTemplate from '~/components/ui/DialogTemplate';
 import { TrashIcon, CrossIcon } from '~/components/svg';
+import { useContext } from 'react';
+import { ChatDataContext } from '~/App';
+import axios from 'axios';
 
 export default function DeleteButton({ conversationId, renaming, retainView, title }) {
   const localize = useLocalize();
@@ -16,23 +19,26 @@ export default function DeleteButton({ conversationId, renaming, retainView, tit
   const { conversationId: currentConvoId } = useParams();
   const deleteConvoMutation = useDeleteConversationMutation();
 
-  const confirmDelete = () => {
-    const messages = queryClient.getQueryData<TMessage[]>([QueryKeys.messages, conversationId]);
-    const thread_id = messages?.[messages?.length - 1]?.thread_id;
+  const { fetchSsebowaConversations } = useContext(ChatDataContext);
+  const confirmDelete = async () => {
+    await axios.delete(`/api/ssebowa/ssebowa-conversation/${conversationId}`)
+    fetchSsebowaConversations()
+    // const messages = queryClient.getQueryData<TMessage[]>([QueryKeys.messages, conversationId]);
+    // const thread_id = messages?.[messages?.length - 1]?.thread_id;
 
-    deleteConvoMutation.mutate(
-      { conversationId, thread_id, source: 'button' },
-      {
-        onSuccess: () => {
-          if (currentConvoId === conversationId) {
-            newConversation();
-          }
+    // deleteConvoMutation.mutate(
+    //   { conversationId, thread_id, source: 'button' },
+    //   {
+    //     onSuccess: () => {
+    //       if (currentConvoId === conversationId) {
+    //         newConversation();
+    //       }
 
-          refreshConversations();
-          retainView();
-        },
-      },
-    );
+    //       refreshConversations();
+    //       retainView();
+    //     },
+    //   },
+    // );
   };
 
   return (

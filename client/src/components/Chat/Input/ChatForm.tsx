@@ -1,5 +1,5 @@
 import { useRecoilState } from 'recoil';
-import { useContext, type ChangeEvent } from 'react';
+import { useContext, type ChangeEvent, useEffect } from 'react';
 import { useChatContext } from '~/Providers';
 import { useRequiresKey } from '~/hooks';
 import AttachFile from './Files/AttachFile';
@@ -10,6 +10,9 @@ import Textarea from './Textarea';
 import store from '~/store';
 import axios from 'axios';
 import { ChatDataContext } from '~/App';
+import { ExtendedFile } from '~/common';
+import type { TFile } from 'librechat-data-provider';
+import SearchFileBubbleChat from '~/components/Chat/Input/SearchFileBubbleChat';
 
 export default function ChatForm({ index = 0 }) {
   const [text, setText] = useRecoilState(store.textByIndex(index));
@@ -26,7 +29,7 @@ export default function ChatForm({ index = 0 }) {
     setFilesLoading,
   } = useChatContext();
 
-  const { submitChatMessage } = useContext(ChatDataContext);
+  const { submitChatMessage, ssebowaData } = useContext(ChatDataContext);
   const sendMessage = async () => {
     // ask({ text });
     submitChatMessage({ text: text, files: files });
@@ -35,8 +38,39 @@ export default function ChatForm({ index = 0 }) {
   };
 
   const { requiresKey } = useRequiresKey();
-  const { endpoint: _endpoint, endpointType } = conversation ?? { endpoint: null };
+  const { endpoint: _endpoint, endpointType } = conversation ?? { endpoint: '' };
   const endpoint = endpointType ?? _endpoint;
+
+  async function handleSelectedFile(file: TFile) {
+    const imgUrl =
+      file.source === 'local' ? `${window.location.origin}${file.filepath}` : file.filepath;
+    const response = await fetch(imgUrl);
+    const blob = await response.blob();
+    const fileBlob = new File([blob], file.filename, { type: file.type });
+
+    const extendedFile: ExtendedFile = {
+      _id: file._id,
+      file_id: file.file_id,
+      source: file.source,
+      filepath: file.filepath,
+      file: fileBlob,
+      type: file.type,
+      preview: URL.createObjectURL(blob),
+      progress: 1,
+      size: fileBlob.size,
+    };
+
+    setFiles((currentFiles) => {
+      const updatedFiles = new Map(currentFiles);
+      updatedFiles.set(file.file_id, extendedFile);
+      return updatedFiles;
+    });
+  }
+
+  useEffect(() => {
+    console.log('endppoint', endpoint, _endpoint);
+  }, [endpoint, _endpoint]);
+
   return (
     <form
       onSubmit={(e) => {
@@ -58,26 +92,37 @@ export default function ChatForm({ index = 0 }) {
                 </div>
               )}
             />
-            {endpoint && (
+            <SearchFileBubbleChat
+              chatText={text}
+              onSelectFile={(file, queryName) => {
+                setText((prev) => {
+                  const replaceRegex = new RegExp(`${queryName}`, 'g');
+                  let updatedText = prev.replace(replaceRegex, '');
+                  return updatedText;
+                });
+                handleSelectedFile(file);
+              }}
+            />
+            {true && (
               <Textarea
                 value={text}
                 disabled={requiresKey}
                 onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setText(e.target.value)}
                 setText={setText}
                 submitMessage={sendMessage}
-                endpoint={_endpoint}
+                endpoint={endpoint ?? ""}
                 endpointType={endpointType}
               />
             )}
             <AttachFile
-              endpoint={_endpoint ?? ''}
+              endpoint={'openAI' ?? ''}
               endpointType={endpointType}
               disabled={requiresKey}
             />
             {isSubmitting && showStopButton ? (
               <StopButton stop={handleStopGenerating} setShowStopButton={setShowStopButton} />
             ) : (
-              endpoint && (
+              true && (
                 <div onClick={sendMessage}>
                   <SendButton text={text} disabled={filesLoading || isSubmitting || requiresKey} />
                 </div>

@@ -1,6 +1,6 @@
 import { RecoilRoot } from 'recoil';
 import { DndProvider } from 'react-dnd';
-import { RouterProvider } from 'react-router-dom';
+import { RouterProvider, useLocation } from 'react-router-dom';
 import * as RadixToast from '@radix-ui/react-toast';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -18,6 +18,10 @@ const App = () => {
   const [ssebowaData, setSSbowaData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [ssebowaConversations, setSsebowaConversations] = useState([]);
+  const [ssebowaConversation, setSsebowaConversation] = useState({});
+  const [convId, setConvId] = useState('new');
+
   const queryClient = new QueryClient({
     queryCache: new QueryCache({
       onError: (error) => {
@@ -28,34 +32,121 @@ const App = () => {
     }),
   });
   useEffect(() => {
-    const filter = ssebowaData.filter((item) => item.text && item?.text != 'Please wait a minute, the image will soon appear');
+    const filter = ssebowaData.filter(
+      (item) => item.text && item?.text != 'Please wait a minute, the image will soon appear',
+    );
     setSSbowaData(filter);
   }, [isLoading]);
+
+  const fetchSsebowaConversations = useCallback(async () => {
+    const user = localStorage.getItem('user');
+    const userId = user ? JSON.parse(user).id : '';
+    const response = await axios.get('/api/ssebowa/ssebowa-conversation?id=' + userId);
+    setSsebowaConversations(response.data);
+  }, [setSsebowaConversations]);
+
+  const fetchSsebowaConversation = useCallback(
+    async (id) => {
+      const response = await axios.get('/api/ssebowa/ssebowa-conversation/' + id);
+      setSsebowaConversation(response.data);
+      return response;
+    },
+    [setSsebowaConversations],
+  );
 
   const specificImageGenerationWords = ['generate', 'draw', 'design'];
   const submitChatMessage = useCallback(async (data) => {
     const formData = new FormData();
     formData.append('prompt', data.text);
+    const fileListId = [];
+    const fileList = [];
     data.files.forEach((file) => {
+      fileList.push(file);
+      fileListId.push(file._id);
       formData.append('image', file.file);
     });
     try {
       setIsLoading(true);
-      setSSbowaData((prevData) => [...prevData, { sentByUser: true, text: data?.text }]);
-      const includesSpecificWord = specificImageGenerationWords.some(word => data?.text?.toLowerCase().includes(word));
+      const user = localStorage.getItem('user');
+      const userId = user ? JSON.parse(user).id : '';
+      const resMessage = await axios.post('/api/ssebowa/ssebowa-message', {
+        sender: 'User',
+        text: data?.text,
+        user: userId,
+        files: fileListId,
+      });
+      setSSbowaData((prevData) => [
+        ...prevData,
+        {
+          files: fileList,
+          text: data?.text,
+          sentByUser: true,
+          messageId: resMessage.data._id,
+        },
+      ]);
+      const localConvId = localStorage.getItem('conversationId');
+      let convMessage = { data: { _id: localConvId } };
+      if (localConvId === 'new') {
+        convMessage = await axios.post('/api/ssebowa/ssebowa-conversation', {
+          user: userId,
+          title: 'New Chat',
+          messages: [],
+        });
+        await fetchSsebowaConversations();
+      }
+      // if (localConvId !== 'new') {
+      await axios.put(`/api/ssebowa/ssebowa-conversation/${convMessage.data._id}/messages`, {
+        messages: resMessage.data._id,
+      });
+      if (localConvId === 'new') {
+        await axios.put('/api/ssebowa/ssebowa-conversation/' + convMessage.data._id, {
+          title: data?.text.substring(0, 25),
+        });
+        await fetchSsebowaConversations();
+      }
+      // } else {
+      //   convMessage = await axios.post('/api/ssebowa/ssebowa-conversation', { user: userId, title: data?.text.substring(0, 25), messages: [resMessage.data._id] })
+      // }
+      const includesSpecificWord = specificImageGenerationWords.some((word) =>
+        data?.text?.toLowerCase().includes(word),
+      );
       setTimeout(() => {
-        setSSbowaData((prevData) => [...prevData, { sentByUser: false, isImage: false, text: includesSpecificWord ? 'Please wait a minute, the image will soon appear' : '' }]);
+        setSSbowaData((prevData) => [
+          ...prevData,
+          {
+            sentByUser: false,
+            isImage: false,
+            text: includesSpecificWord ? 'Please wait a minute, the image will soon appear' : '',
+          },
+        ]);
       }, 100);
+      formData.append('convid', convMessage.data._id)
       const response = await axios.post('https://api5.ssebowa.chat/ssebowavlm', formData, {
         headers: {
-          'API-KEY': 'your_api_key',
+          'API-KEY': 'ssebowa_3a4b8f7c2e1d6a9b5d8c3e2f1a7b6e9',
         },
       });
-      setTimeout(() => {
-        setSSbowaData((prevData) => [...prevData, {
-          sentByUser: false, isImage: includesSpecificWord,
+      setTimeout(async () => {
+        const resMessage2 = await axios.post('/api/ssebowa/ssebowa-message', {
+          sender: 'SsebowaAI',
           text: response?.data,
-        }]);
+          user: userId,
+          isImage: includesSpecificWord,
+        });
+        setSSbowaData((prevData) => [
+          ...prevData,
+          {
+            sentByUser: false,
+            text: response?.data,
+            isImage: includesSpecificWord,
+            messageId: resMessage2.data._id,
+            feedback: resMessage2.data.feedback,
+          },
+        ]);
+        const convMessage2 = await axios.put(
+          `/api/ssebowa/ssebowa-conversation/${convMessage.data._id}/messages`,
+          { messages: resMessage2.data._id },
+        );
       }, 10);
     } catch (err) {
       console.log(err);
@@ -64,6 +155,81 @@ const App = () => {
     }
   }, []);
 
+  const updateChatMessage = useCallback(async (data) => {
+    const formData = new FormData();
+    formData.append('prompt', data.text);
+    data.files.forEach((file) => {
+      formData.append('image', file.file);
+    });
+    try {
+      setIsLoading(true);
+      setSSbowaData((prevData) => {
+        const newData = [...prevData];
+        const index = newData.findIndex((item) => item.messageId === data.messageId);
+        newData[index].text = data.text;
+        return newData;
+      });
+      await axios.put(`/api/ssebowa/ssebowa-message/${data.messageId}`, {
+        text: data?.text,
+      });
+      const includesSpecificWord = specificImageGenerationWords.some((word) =>
+        data?.text?.toLowerCase().includes(word),
+      );
+      setTimeout(() => {
+        setSSbowaData((prevData) => {
+          const newData = [...prevData];
+          const index = newData.findIndex((item) => item.messageId === data.answerId);
+          newData[index] = {
+            sentByUser: false,
+            isImage: false,
+            text: includesSpecificWord ? 'Please wait a minute, the image will soon appear' : '',
+          };
+          return newData;
+        });
+      }, 100);
+      const localConvId = localStorage.getItem('conversationId');
+      let convMessage = { data: { _id: localConvId } };
+      formData.append('convid', convMessage.data._id)
+      const response = await axios.post('https://api5.ssebowa.chat/ssebowavlm', formData, {
+        headers: {
+          'API-KEY': 'ssebowa_3a4b8f7c2e1d6a9b5d8c3e2f1a7b6e9',
+        },
+      });
+      const resMessage2 = await axios.put(`/api/ssebowa/ssebowa-message/${data.answerId}`, {
+        text: response?.data,
+        isImage: includesSpecificWord,
+        feedback: null
+      });
+      setSSbowaData((prevData) => {
+        const newData = [...prevData];
+        const index = newData.findIndex((item) => item.messageId === data.messageId);
+        newData.splice(index + 1, 0, {
+          sentByUser: false,
+          text: response?.data,
+          isImage: includesSpecificWord,
+          messageId: resMessage2.data._id,
+          feedback: resMessage2.data.feedback,
+        });
+        return newData;
+      });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const user = localStorage.getItem('user');
+  const userId = user ? JSON.parse(user).id : '';
+
+  useEffect(() => {
+    fetchSsebowaConversations();
+  }, [fetchSsebowaConversations, userId]);
+
+  useEffect(() => {
+    //
+  }, [convId]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <RecoilRoot>
@@ -71,7 +237,22 @@ const App = () => {
           <RadixToast.Provider>
             <ToastProvider>
               <DndProvider backend={HTML5Backend}>
-                <ChatDataContext.Provider value={{ submitChatMessage, ssebowaData, isLoading }}>
+                <ChatDataContext.Provider
+                  value={{
+                    submitChatMessage,
+                    updateChatMessage,
+                    ssebowaData,
+                    setSSbowaData,
+                    isLoading,
+                    setIsLoading,
+                    ssebowaConversations,
+                    ssebowaConversation,
+                    fetchSsebowaConversation,
+                    convId,
+                    setConvId,
+                    fetchSsebowaConversations,
+                  }}
+                >
                   <RouterProvider router={router} />
                 </ChatDataContext.Provider>
                 <ReactQueryDevtools initialIsOpen={false} position="top-right" />
