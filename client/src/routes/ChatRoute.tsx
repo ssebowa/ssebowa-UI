@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 import { useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   useGetModelsQuery,
   useGetStartupConfig,
@@ -66,6 +66,15 @@ export default function ChatRoute() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialConvoQuery.data, modelsQuery.data, endpointsQuery.data]);
 
+  const navigate = useNavigate()
+  
+  useEffect(() => {
+    console.log('conversation', conversation)
+    if(!conversation){
+      navigate('/c/new')
+    }
+  }, [])
+
   if (endpointsQuery.isLoading || modelsQuery.isLoading) {
     return <Spinner className="m-auto text-black dark:text-white" />;
   }
@@ -79,9 +88,9 @@ export default function ChatRoute() {
     return null;
   }
   // if conversationId not match
-  if (conversation?.conversationId !== conversationId && !conversation) {
-    return null;
-  }
+  // if (conversation?._id !== conversationId && !conversation) {
+  //   return null;
+  // }
   // if conversationId is null
   if (!conversationId) {
     return null;

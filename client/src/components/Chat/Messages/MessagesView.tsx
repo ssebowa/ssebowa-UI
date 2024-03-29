@@ -9,6 +9,7 @@ import MessageContent from './Content/MessageContent';
 import { cn } from '~/utils';
 import { TypeAnimation } from 'react-type-animation';
 import { ChatDataContext } from '~/App';
+import { useParams } from 'react-router-dom';
 
 export default function MessagesView({
   messagesTree: _messagesTree,
@@ -31,6 +32,13 @@ export default function MessagesView({
   } = useMessageScrolling(_messagesTree);
   const { conversationId } = conversation ?? {};
   const { isLoading } = useContext(ChatDataContext);
+
+
+  const params = useParams()
+
+  useEffect(() => {
+    // getConversation(conversationId)
+  }, [])
 
   return (
     <div className="flex-1 overflow-hidden overflow-y-auto">
@@ -61,6 +69,7 @@ export default function MessagesView({
                     currentEditId={currentEditId ?? null}
                   />
                 </div> */}
+                {/* <div>{_messagesTree?.length}</div> */}
                 <div ref={screenshotTargetRef}>
                   <>
                     {_messagesTree?.map((item, idx) => {

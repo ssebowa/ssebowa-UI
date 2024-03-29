@@ -1,5 +1,5 @@
 import { useRecoilState } from 'recoil';
-import { useContext, type ChangeEvent } from 'react';
+import { useContext, type ChangeEvent, useEffect } from 'react';
 import { useChatContext } from '~/Providers';
 import { useRequiresKey } from '~/hooks';
 import AttachFile from './Files/AttachFile';
@@ -26,7 +26,7 @@ export default function ChatForm({ index = 0 }) {
     setFilesLoading,
   } = useChatContext();
 
-  const { submitChatMessage } = useContext(ChatDataContext);
+  const { submitChatMessage, ssebowaData } = useContext(ChatDataContext);
   const sendMessage = async () => {
     // ask({ text });
     submitChatMessage({ text: text, files: files });
@@ -35,8 +35,12 @@ export default function ChatForm({ index = 0 }) {
   };
 
   const { requiresKey } = useRequiresKey();
-  const { endpoint: _endpoint, endpointType } = conversation ?? { endpoint: null };
+  const { endpoint: _endpoint, endpointType } = conversation ?? { endpoint: '' };
   const endpoint = endpointType ?? _endpoint;
+
+  useEffect(() => {
+    console.log('endppoint', endpoint, _endpoint)
+  }, [endpoint, _endpoint])
   return (
     <form
       onSubmit={(e) => {
@@ -58,26 +62,26 @@ export default function ChatForm({ index = 0 }) {
                 </div>
               )}
             />
-            {endpoint && (
+            {true && (
               <Textarea
                 value={text}
                 disabled={requiresKey}
                 onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setText(e.target.value)}
                 setText={setText}
                 submitMessage={sendMessage}
-                endpoint={_endpoint}
+                endpoint={endpoint}
                 endpointType={endpointType}
               />
             )}
             <AttachFile
-              endpoint={_endpoint ?? ''}
+              endpoint={'openAI' ?? ''}
               endpointType={endpointType}
               disabled={requiresKey}
             />
             {isSubmitting && showStopButton ? (
               <StopButton stop={handleStopGenerating} setShowStopButton={setShowStopButton} />
             ) : (
-              endpoint && (
+              true && (
                 <div onClick={sendMessage}>
                   <SendButton text={text} disabled={filesLoading || isSubmitting || requiresKey} />
                 </div>

@@ -1,0 +1,9 @@
+# Ignore node_modules in root directory
+**/node_modules
+login-logs.log
+.env
+
+# Ignore dist and logs directories in all subdirectories
+**/dist/
+**/logs/
+**/public/images/
