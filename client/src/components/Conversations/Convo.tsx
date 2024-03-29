@@ -120,7 +120,7 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
   };
 
   const aProps = {
-    className: `group relative rounded-lg active:opacity-50 flex cursor-pointer items-center mt-2 gap-3 break-all rounded-lg bg-gray-200 dark:bg-gray-800 py-2 px-2 ${
+    className: `group relative rounded-lg active:opacity-50 flex cursor-pointer items-center mt-2 gap-3 break-all rounded-lg dark:bg-gray-800 py-2 px-2 ${
       renaming ? 'pr-14' : ''
     }`,
   };
@@ -142,7 +142,7 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
       title={title}
     >
       {icon}
-      <div className="relative line-clamp-1 max-h-5 flex-1 grow overflow-hidden">
+      <div className="relative line-clamp-1 max-h-5 flex-1 grow overflow-hidden rounded-lg">
         {renaming === true ? (
           <input
             ref={inputRef}
@@ -164,7 +164,7 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
           }`}
         ></div>
       ) : (
-        <div className="absolute bottom-0 right-0 top-0 w-2 bg-gradient-to-l from-gray-50 from-0% to-transparent group-hover:w-1 group-hover:from-60% dark:from-gray-900"></div>
+        <div className="absolute bottom-0 right-0 top-0 w-2 bg-gradient-to-l from-gray-50 from-0% to-transparent rounded-r-lg group-hover:w-1 group-hover:from-60% dark:from-gray-900"></div>
       )}
       {activeConvo ? (
         <div className="visible absolute right-1 z-10 flex text-gray-400">
@@ -177,7 +177,7 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
           />
         </div>
       ) : (
-        <div className="absolute bottom-0 right-0 top-0 w-20 rounded-lg bg-gradient-to-l from-gray-50 from-0% to-transparent group-hover:from-gray-50  dark:from-gray-900 dark:group-hover:from-gray-900" />
+        <div className="absolute bottom-0 right-0 top-0 w-20 bg-gradient-to-l from-gray-50 from-0% to-transparent group-hover:from-gray-50  dark:from-gray-900 rounder-r-lg dark:group-hover:from-gray-900" />
       )}
     </Link>
   );

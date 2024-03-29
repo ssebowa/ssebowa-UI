@@ -158,7 +158,7 @@ export default function TextChat({ isSearchView = false }: TextChatProps) {
         }}
       >
         {/* <OptionsBar /> */}
-        <div className="input-panel md:bg-vert-light-gradient dark:md:bg-vert-dark-gradient relative w-full border-t bg-white py-2 dark:border-white/20 dark:bg-gray-800 md:border-t-0 md:border-transparent md:bg-transparent md:dark:border-transparent md:dark:bg-transparent">
+        <div className="input-panel md:bg-vert-light-gradient dark:md:bg-vert-dark-gradient relative w-full border-t bg-white py-2 dark:border-white/20 dark:bg-gray-900 md:border-t-0 md:border-transparent md:bg-transparent md:dark:border-transparent md:dark:bg-transparent">
           <form className="stretch z-[60] mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:pt-2 md:last:mb-6 lg:mx-auto lg:max-w-3xl lg:pt-6">
             <div className="relative flex h-full flex-1 md:flex-col">
               <div
@@ -166,7 +166,7 @@ export default function TextChat({ isSearchView = false }: TextChatProps) {
                   'relative flex flex-grow flex-row rounded-xl border border-black/10 py-[10px] md:py-4 md:pl-4',
                   'shadow-[0_0_15px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]',
                   'dark:border-gray-800/50 dark:text-white',
-                  disabled ? 'bg-gray-200 dark:bg-gray-800' : 'bg-white dark:bg-gray-700',
+                  disabled ? 'bg-gray-200 dark:bg-gray-900' : 'bg-white dark:bg-gray-700',
                 )}
               >
                 <EndpointMenu />

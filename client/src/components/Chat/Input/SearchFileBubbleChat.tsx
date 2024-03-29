@@ -56,7 +56,7 @@ export default function SearchFileBubbleChat({
   }
 
   return (
-    <div className="bg-gray-750 py-3" ref={containerRef}>
+    <div className="bg-gray-700 py-3" ref={containerRef}>
       {searchFiles.map((file, index) => (
         <div
           key={index}

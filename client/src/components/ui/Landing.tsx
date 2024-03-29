@@ -25,7 +25,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="flex h-full flex-col items-center overflow-y-auto pt-0 text-sm dark:bg-gray-800">
+    <div className="flex h-full flex-col items-center overflow-y-auto pt-0 text-sm dark:bg-gray-900">
       <div className="w-full px-6 text-gray-800 dark:text-gray-200 md:flex md:max-w-2xl md:flex-col lg:max-w-3xl">
         <h1
           id="landing-title"
@@ -108,7 +108,7 @@ export default function Landing() {
           </div>
         )}
         {!!showingTemplates && <Templates showTemplates={showTemplates}/>} */}
-        {/* <div className="group h-32 w-full flex-shrink-0 dark:border-gray-800/50 dark:bg-gray-800 md:h-48" /> */}
+        {/* <div className="group h-32 w-full flex-shrink-0 dark:border-gray-800/50 dark:bg-gray-900 md:h-48" /> */}
       </div>
     </div>
   );

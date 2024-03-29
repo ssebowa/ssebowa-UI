@@ -29,7 +29,7 @@ import { Panel } from '~/common';
 
 const labelClass = 'mb-2 block text-xs font-bold text-gray-700 dark:text-gray-400';
 const inputClass =
-  'focus:shadow-outline w-full appearance-none rounded-md border px-3 py-2 text-sm leading-tight text-gray-700 dark:text-white shadow focus:border-green-500 focus:outline-none focus:ring-0 dark:bg-gray-800 dark:border-gray-700/80';
+  'focus:shadow-outline w-full appearance-none rounded-md border px-3 py-2 text-sm leading-tight text-gray-700 dark:text-white shadow focus:border-green-500 focus:outline-none focus:ring-0 dark:bg-gray-900 dark:border-gray-700/80';
 
 export default function AssistantPanel({
   // index = 0,
@@ -267,7 +267,7 @@ export default function AssistantPanel({
                   {...field}
                   value={field.value ?? ''}
                   {...{ max: 32768 }}
-                  className="focus:shadow-outline min-h-[150px] w-full resize-none resize-y appearance-none rounded-md border px-3 py-2 text-sm leading-tight text-gray-700 shadow focus:border-green-500 focus:outline-none focus:ring-0 dark:border-gray-700/80 dark:bg-gray-800 dark:text-white"
+                  className="focus:shadow-outline min-h-[150px] w-full resize-none resize-y appearance-none rounded-md border px-3 py-2 text-sm leading-tight text-gray-700 shadow focus:border-green-500 focus:outline-none focus:ring-0 dark:border-gray-700/80 dark:bg-gray-900 dark:text-white"
                   id="instructions"
                   placeholder={localize('com_assistants_instructions_placeholder')}
                   rows={3}

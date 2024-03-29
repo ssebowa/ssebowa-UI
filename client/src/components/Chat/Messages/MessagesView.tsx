@@ -2,17 +2,11 @@ import { useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 // import type { TMessage } from 'librechat-data-provider';
 import ScrollToBottom from '~/components/Messages/ScrollToBottom';
-import { useScreenshot, useMessageScrolling, useToast } from '~/hooks';
+import { useScreenshot, useMessageScrolling } from '~/hooks';
 import { CSSTransition } from 'react-transition-group';
-import { cn } from '~/utils';
-import { TypeAnimation } from 'react-type-animation';
 import { ChatDataContext } from '~/App';
-import { ExtendedFile, NotificationSeverity } from '~/common';
-import { CopyIcon, EditIcon, ThumbsDownIcon, ThumbsUpIcon } from 'lucide-react';
-import { updateFeedbackMessageById } from '~/data-provider/axios';
-import Textarea from '~/components/Chat/Input/Textarea';
-import { useChatContext } from '~/Providers';
-import SubmitButton from '~/components/Input/SubmitButton';
+import { ExtendedFile } from '~/common';
+import MessageCard from '~/components/Chat/Messages/MessageCard';
 
 export default function MessagesView({
   messagesTree: _messagesTree,
@@ -32,17 +26,12 @@ export default function MessagesView({
   Header?: ReactNode;
 }) {
   const { screenshotTargetRef } = useScreenshot();
-  const [containerMessageHovering, setContainerMessageHovering] = useState({
-    item: -1,
-    hover: false,
-  });
   const [editMessage, setEditMessage] = useState({
     idx: -1,
     enable: false,
     message: '',
   });
 
-  const { showToast } = useToast();
   const {
     conversation,
     scrollableRef,
@@ -51,62 +40,7 @@ export default function MessagesView({
     handleSmoothToRef,
     debouncedHandleScroll,
   } = useMessageScrolling(_messagesTree);
-  const { conversationId } = conversation ?? {};
-  const { updateChatMessage, setSSbowaData, isLoading } = useContext(ChatDataContext);
-
-  useEffect(() => {
-    // getConversation(conversationId)
-  }, [_messagesTree]);
-
-  const { endpoint: _endpoint, endpointType } = conversation ?? { endpoint: '' };
-  const endpoint = endpointType ?? _endpoint;
-
-  const handleCopyClick = (textToCopy: string) => {
-    // For modern browsers
-    if (navigator.clipboard) {
-      navigator.clipboard
-        .writeText(textToCopy)
-        .then(() =>
-          showToast({
-            message: 'Text copied to clipboard',
-            severity: NotificationSeverity.SUCCESS,
-          }),
-        )
-        .catch((error) => {
-          showToast({
-            message: 'Error copying text to clipboard',
-            severity: NotificationSeverity.ERROR,
-          });
-          console.error('Error copying text:', error);
-        });
-    } else {
-      // For older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = textToCopy;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      showToast({
-        message: 'Text copied to clipboard',
-        severity: NotificationSeverity.SUCCESS,
-      });
-    }
-  };
-
-  const handleOnClickFeedback = async (messageId: string, feedback: 'positive' | 'negative') => {
-    const response = await updateFeedbackMessageById(messageId, { feedback });
-    if (response.status === 200) {
-      setSSbowaData((prev) => {
-        return prev.map((msg) => {
-          if (msg.messageId === messageId) {
-            return { ...msg, feedback };
-          }
-          return msg;
-        });
-      });
-    }
-  };
+  const { updateChatMessage } = useContext(ChatDataContext);
 
   const handleSubmitEditMessage = async () => {
     const message = _messagesTree?.[editMessage.idx];
@@ -133,7 +67,7 @@ export default function MessagesView({
       fileMap.set(file.file_id, extendedFile);
     });
     if (getAllFile) {
-      await Promise.all(getAllFile)
+      await Promise.all(getAllFile);
     }
     updateChatMessage({
       messageId: message?.messageId ?? '',
@@ -162,7 +96,7 @@ export default function MessagesView({
         >
           <div className="flex flex-col pb-9 text-sm dark:bg-transparent">
             {(_messagesTree && !_messagesTree?.length) || _messagesTree === null ? (
-              <div className="flex w-full items-center justify-center gap-1 bg-gray-50 p-3 text-sm text-gray-500 dark:border-gray-800/50 dark:bg-gray-800 dark:text-gray-300">
+              <div className="flex w-full items-center justify-center gap-1 bg-gray-50 p-3 text-sm text-gray-500 dark:border-gray-800/50 dark:bg-gray-900 dark:text-gray-300">
                 Nothing found
               </div>
             ) : (
@@ -187,7 +121,11 @@ export default function MessagesView({
                           className="text-token-text-primary w-full border-0 bg-transparent dark:border-0 dark:bg-transparent"
                         >
                           <div className="m-auto justify-center p-4 py-2 text-base md:gap-6 ">
-                            <div className="} group mx-auto flex flex-1 gap-3 text-base md:max-w-3xl md:px-5 lg:max-w-[40rem] lg:px-1 xl:max-w-[48rem] xl:px-5">
+                            <div className={`
+                                group mx-auto flex flex-1 gap-3 text-base md:max-w-3xl 
+                                md:px-5 lg:max-w-[40rem] lg:px-1 xl:max-w-[48rem] xl:px-5
+                                ${item?.sentByUser ? 'mt-3' : ''}
+                              `}>
                               <div className="relative flex flex-shrink-0 flex-col items-end">
                                 <div>
                                   <div className="pt-0.5">
@@ -223,204 +161,15 @@ export default function MessagesView({
                                   </div>
                                 </div>
                               </div>
-                              <div
-                                className={cn(
-                                  'relative flex w-full flex-col',
-                                  item?.sentByUser ? '' : 'agent-turn',
-                                )}
-                              >
-                                <div className="select-none font-semibold">
-                                  {item?.sentByUser ? 'You' : 'SsebowaAI'}
-                                </div>
-                                <div className="flex-col gap-1 md:gap-3">
-                                  <div
-                                    className={`
-                                      duration-[1000ms] -mx-4 mt-2 flex max-w-full 
-                                      flex-grow flex-col gap-0 rounded-xl 
-                                      px-4 py-3 transition-all ease-in
-                                      ${
-                                        editMessage.idx === idx && editMessage.enable
-                                          ? `scale-[1.002]
-                                             shadow-[0_0_10px_5px_rgba(0,0,0,0.10)]
-                                            `
-                                          : `hover:scale-[1.002]
-                                             hover:shadow-[0_0_10px_5px_rgba(0,0,0,0.10)]
-                                            `
-                                      }
-                                    `}
-                                    onMouseEnter={() =>
-                                      setContainerMessageHovering({
-                                        item: idx,
-                                        hover: true,
-                                      })
-                                    }
-                                    onMouseLeave={() =>
-                                      setContainerMessageHovering({
-                                        item: idx,
-                                        hover: false,
-                                      })
-                                    }
-                                  >
-                                    {item?.isImage ? (
-                                      <img
-                                        src={item?.text}
-                                        className="mt-2 max-h-[500px] rounded"
-                                      />
-                                    ) : !item?.sentByUser && idx == _messagesTree?.length - 1 ? (
-                                      <TypeAnimation
-                                        splitter={(str) => str.split(/(?= )/)}
-                                        sequence={[item?.text, 3000, item?.text]}
-                                        style={{ whiteSpace: 'pre-wrap' }}
-                                        speed={{ type: 'keyStrokeDelayInMs', value: 30 }}
-                                        repeat={0}
-                                        cursor={isLoading}
-                                      />
-                                    ) : (
-                                      <>
-                                        {item?.files?.length > 0 &&
-                                        item?.files?.[0].type?.includes('image') ? (
-                                          <img
-                                            src={
-                                              item?.files?.[0].source === 'local'
-                                                ? `${window.location.origin}${item.files?.[0].filepath}`
-                                                : item.files?.[0].filepath
-                                            }
-                                            className="my-2 mb-4 rounded"
-                                          />
-                                        ) : null}
-                                        {editMessage.idx === idx && editMessage.enable ? (
-                                          <Textarea
-                                            value={editMessage.message}
-                                            disabled={false}
-                                            onChange={(e) =>
-                                              setEditMessage({
-                                                ...editMessage,
-                                                message: e.target.value,
-                                              })
-                                            }
-                                            submitMessage={() => {}}
-                                            setText={(value) =>
-                                              setEditMessage({
-                                                ...editMessage,
-                                                message: value as string,
-                                              })
-                                            }
-                                            endpoint={endpoint ?? ''}
-                                            endpointType={endpointType}
-                                            extendedClassname="!ml-[-55px] !pr-[0]"
-                                          />
-                                        ) : (
-                                          <div style={{ whiteSpace: 'pre-wrap' }}>{item?.text}</div>
-                                        )}
-                                      </>
-                                    )}
-                                    {editMessage.idx === idx && editMessage.enable ? (
-                                      <div className="mt-3 flex h-full justify-center gap-x-2">
-                                        <button
-                                          className={`
-                                          font-reguler rounded-md bg-green-500 
-                                          px-3 py-1.5 text-sm text-white hover:bg-green-600
-                                        `}
-                                          onClick={handleSubmitEditMessage}
-                                        >
-                                          Save & Submit
-                                        </button>
-                                        <button
-                                          className={`
-                                          font-reguler rounded-md border-[1px] border-red-500 bg-transparent 
-                                          px-3 py-1.5 text-sm text-white hover:border-transparent 
-                                          hover:bg-red-500
-                                        `}
-                                          onClick={() => {
-                                            setEditMessage({
-                                              idx: -1,
-                                              enable: false,
-                                              message: '',
-                                            });
-                                          }}
-                                        >
-                                          Cancel
-                                        </button>
-                                      </div>
-                                    ) : (
-                                      <div
-                                        className={
-                                          idx === containerMessageHovering.item &&
-                                          containerMessageHovering.hover
-                                            ? 'pointer-events-auto mt-1 opacity-100'
-                                            : 'pointer-events-none mt-1 opacity-0'
-                                        }
-                                      >
-                                        {!item?.isImage ? (
-                                          <div
-                                            className="inline-flex px-1 pt-1"
-                                            onClick={() => {
-                                              handleCopyClick(item?.text);
-                                            }}
-                                          >
-                                            <CopyIcon
-                                              size={18}
-                                              className="duration-[500ms] stroke-gray-400 transition-all hover:stroke-white"
-                                            />
-                                          </div>
-                                        ) : null}
-                                        {item?.sentByUser ? (
-                                          <div
-                                            className="inline-flex px-1 pt-1"
-                                            onClick={() => {
-                                              setEditMessage({
-                                                idx,
-                                                enable: true,
-                                                message: _messagesTree?.[idx]?.text ?? '',
-                                              });
-                                            }}
-                                          >
-                                            <EditIcon
-                                              size={18}
-                                              className="duration-[500ms] stroke-gray-400 transition-all hover:stroke-white"
-                                            />
-                                          </div>
-                                        ) : (
-                                          <>
-                                            <div
-                                              className="inline-flex px-1 pt-1"
-                                              onClick={() =>
-                                                handleOnClickFeedback(item?.messageId, 'positive')
-                                              }
-                                            >
-                                              <ThumbsUpIcon
-                                                size={18}
-                                                className={`
-                                                  duration-[500ms] transition-all ${
-                                                    item?.feedback === 'positive'
-                                                      ? 'stroke-green-500'
-                                                      : 'stroke-gray-400 hover:stroke-white'
-                                                  }`}
-                                              />
-                                            </div>
-                                            <div
-                                              className="inline-flex px-1 pt-1"
-                                              onClick={() =>
-                                                handleOnClickFeedback(item?.messageId, 'negative')
-                                              }
-                                            >
-                                              <ThumbsDownIcon
-                                                size={18}
-                                                className={`
-                                                  duration-[500ms] transition-all ${
-                                                    item?.feedback === 'negative'
-                                                      ? 'stroke-red-500'
-                                                      : 'stroke-gray-400 hover:stroke-white'
-                                                  }`}
-                                              />
-                                            </div>
-                                          </>
-                                        )}
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
+                              <MessageCard
+                                item={item}
+                                idx={idx}
+                                editMessage={editMessage}
+                                setEditMessage={setEditMessage}
+                                handleSubmitEditMessage={handleSubmitEditMessage}
+                                conversation={conversation}
+                                listLength={_messagesTree?.length}
+                              />
                             </div>
                           </div>
                         </div>

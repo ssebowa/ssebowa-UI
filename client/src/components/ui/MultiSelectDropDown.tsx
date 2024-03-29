@@ -57,7 +57,7 @@ function MultiSelectDropDown({
             <>
               <Listbox.Button
                 className={cn(
-                  'relative flex w-full cursor-default flex-col rounded-md border border-black/10 bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus:ring-0 focus:ring-offset-0 dark:border-white/20 dark:bg-gray-800 sm:text-sm',
+                  'relative flex w-full cursor-default flex-col rounded-md border border-black/10 bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus:ring-0 focus:ring-offset-0 dark:border-white/20 dark:bg-gray-900 sm:text-sm',
                   className ?? '',
                 )}
                 id={excludeIds[0]}
@@ -136,7 +136,7 @@ function MultiSelectDropDown({
               >
                 <Listbox.Options
                   ref={menuRef}
-                  className="absolute z-50 mt-2 max-h-60 w-full overflow-auto rounded bg-white text-base text-xs ring-1 ring-black/10 focus:outline-none dark:bg-gray-800 dark:ring-white/20 dark:last:border-0 md:w-[100%]"
+                  className="absolute z-50 mt-2 max-h-60 w-full overflow-auto rounded bg-white text-base text-xs ring-1 ring-black/10 focus:outline-none dark:bg-gray-900 dark:ring-white/20 dark:last:border-0 md:w-[100%]"
                 >
                   {availableValues.map((option, i: number) => {
                     if (!option) {

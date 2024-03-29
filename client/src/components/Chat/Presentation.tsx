@@ -61,7 +61,7 @@ export default function Presentation({
   const defaultCollapsed = collapsedPanels ? JSON.parse(collapsedPanels) : undefined;
 
   const layout = () => (
-    <div className="transition-width relative flex h-full w-full flex-1 flex-col items-stretch overflow-hidden bg-white pt-0 dark:bg-gray-800">
+    <div className="transition-width relative flex h-full w-full flex-1 flex-col items-stretch overflow-hidden bg-white pt-0 dark:bg-gray-900">
       <div className="flex h-full flex-col" role="presentation" tabIndex={0}>
         {children}
         {isActive && <DragDropOverlay />}
@@ -73,7 +73,7 @@ export default function Presentation({
     return (
       <div
         ref={drop}
-        className="relative flex w-full grow overflow-hidden bg-white dark:bg-gray-800"
+        className="relative flex w-full grow overflow-hidden bg-white dark:bg-gray-900/60"
       >
         <SidePanel defaultLayout={defaultLayout} defaultCollapsed={defaultCollapsed}>
           <div className="flex h-full flex-col" role="presentation" tabIndex={0}>
@@ -86,7 +86,7 @@ export default function Presentation({
   }
 
   return (
-    <div ref={drop} className="relative flex w-full grow overflow-hidden bg-white dark:bg-gray-800">
+    <div ref={drop} className="relative flex w-full grow overflow-hidden bg-white dark:bg-gray-900/60">
       {layout()}
       {panel && panel}
     </div>

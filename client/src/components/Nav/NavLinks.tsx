@@ -106,7 +106,7 @@ function NavLinks() {
               leaveFrom="translate-y-0 opacity-100"
               leaveTo="translate-y-2 opacity-0"
             >
-              <Menu.Items className="absolute bottom-full left-0 z-20 mb-1 mt-1 w-full translate-y-0 overflow-hidden rounded-lg bg-white py-1.5 opacity-100 outline-none dark:bg-gray-800">
+              <Menu.Items className="absolute bottom-full left-0 z-20 mb-1 mt-1 w-full translate-y-0 overflow-hidden rounded-lg bg-white py-1.5 opacity-100 outline-none dark:bg-gray-900">
                 <Menu.Item as="div">
                   <NavLink
                     className={cn(

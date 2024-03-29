@@ -78,7 +78,7 @@ export default function Switcher({ isCollapsed }: SwitcherProps) {
           </span>
         </SelectValue>
       </SelectTrigger>
-      <SelectContent className="bg-white dark:bg-gray-800">
+      <SelectContent className="bg-white dark:bg-gray-900">
         {assistants.map((assistant) => (
           <SelectItem
             key={assistant.id}

@@ -38,17 +38,17 @@ module.exports = {
       colors: {
         gray: {
           20: '#ececf1',
-          50: '#f7f7f8',
-          100: '#ececec',
-          200: '#e3e3e3',
-          300: '#cdcdcd',
-          400: '#999696',
-          500: '#686262',
-          600: '#3d3d3f',
-          700: '#262626', // Replacing .dark .dark:bg-gray-700 and .dark .dark:hover:bg-gray-700:hover
+          50: '#f9fafb',
+          100: '#f3f4f6',
+          200: '#e5e7eb',
+          300: '#d1d5db',
+          400: '#9ca3af',
+          500: '#6b7280',
+          600: '#4b5563',
+          700: '#374151', // Replacing .dark .dark:bg-gray-700 and .dark .dark:hover:bg-gray-700:hover
           750: '#333333',
-          800: '#212121', // Replacing .dark .dark:bg-gray-800, .bg-gray-800, and .dark .dark:hover:bg-gray-800\/90
-          900: '#0d0d0d', // Replacing .dark .dark:bg-gray-900, .bg-gray-900, and .dark .dark:hover:bg-gray-900:hover
+          800: '#1f2937', // Replacing .dark .dark:bg-gray-800, .bg-gray-800, and .dark .dark:hover:bg-gray-800\/90
+          900: '#111827', // Replacing .dark .dark:bg-gray-900, .bg-gray-900, and .dark .dark:hover:bg-gray-900:hover
         },
         green: {
           50: '#f1f9f7',
