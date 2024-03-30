@@ -8,6 +8,7 @@ import { useToastContext } from '~/Providers';
 import DeleteButton from './DeleteButton';
 import RenameButton from './RenameButton';
 import store from '~/store';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Conversation({ conversation, retainView }) {
   const { showToast } = useToastContext();
@@ -106,7 +107,7 @@ export default function Conversation({ conversation, retainView }) {
 
   const aProps = {
     className:
-      'animate-flash group relative flex cursor-pointer items-center gap-3 break-all rounded-md bg-gray-300 dark:bg-gray-800 py-3 px-3 pr-14',
+      'animate-flash group relative flex cursor-pointer items-center gap-3 break-all rounded-md bg-gray-300 dark:bg-gray-900 py-3 px-3 pr-14',
   };
 
   if (currentConversation?.conversationId !== conversationId) {
@@ -115,7 +116,9 @@ export default function Conversation({ conversation, retainView }) {
   }
 
   return (
-    <a data-testid="convo-item" onClick={() => clickHandler()} {...aProps}>
+    <Link 
+    to={`/c/${conversation._id}`}
+    data-testid="convo-item" onClick={() => console.log('clicked')} {...aProps}>
       {icon}
       <div className="relative max-h-5 flex-1 overflow-hidden text-ellipsis break-all">
         {renaming === true ? (
@@ -151,6 +154,6 @@ export default function Conversation({ conversation, retainView }) {
       ) : (
         <div className="absolute inset-y-0 right-0 z-10 w-8 rounded-r-md bg-gradient-to-l from-gray-50 group-hover:from-gray-50 dark:from-gray-900 dark:group-hover:from-gray-800" />
       )}
-    </a>
+    </Link>
   );
 }

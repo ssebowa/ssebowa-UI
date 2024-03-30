@@ -1,6 +1,6 @@
-import { memo, useContext } from 'react';
+import { memo, useCallback, useContext, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useGetMessagesByConvoId } from 'librechat-data-provider/react-query';
 import { ChatContext, useFileMapContext } from '~/Providers';
 import MessagesView from './Messages/MessagesView';
@@ -22,14 +22,67 @@ function ChatView({ index = 0 }: { index?: number }) {
 
   const fileMap = useFileMapContext();
 
-  const { data: messagesTree = null, isLoading } = useGetMessagesByConvoId(conversationId ?? '', {
+  const { data: messagesTree = null, isLoadingA } = useGetMessagesByConvoId(conversationId ?? '', {
     select: (data) => {
       const dataTree = buildTree({ messages: data, fileMap });
       return dataTree?.length === 0 ? null : dataTree ?? null;
     },
     enabled: !!fileMap,
   });
-  const { ssebowaData } = useContext(ChatDataContext);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { ssebowaData, ssebowaConversations, fetchSsebowaConversation, setSSbowaData, setConvId } =
+    useContext(ChatDataContext);
+  // const [cloneSsebowaData, setCloneSsebowaData] = useState([])
+
+  // useEffect(() => {
+  //   setCloneSsebowaData(ssebowaData)
+  // }, [ssebowaData])
+
+  const navigate = useNavigate();
+
+  const getConversation = useCallback(async (id) => {
+    try {
+      setIsLoading(true);
+      const res = await fetchSsebowaConversation(id);
+      const mapRes = res.data.messages.map((message) => {
+        return {
+          sentByUser: message.sender === 'User',
+          files: message.files,
+          isImage: message.isImage,
+          text: message.text,
+          feedback: message.feedback,
+          messageId: message._id,
+        };
+      });
+      if (
+        ssebowaData.length === 0 ||
+        !ssebowaData.some((r) => mapRes.map((r2) => JSON.stringify(r2)).includes(JSON.stringify(r)))
+      ) {
+        setSSbowaData((prevData) => [...prevData, ...mapRes]);
+      }
+    } catch (err) {
+      console.log(err);
+      navigate('/c/new');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    setConvId(conversationId);
+    const oldConversationId = localStorage.getItem('conversationId');
+    if (conversationId !== oldConversationId) {
+      setSSbowaData([]);
+    }
+    localStorage.setItem('conversationId', conversationId || '');
+    if (conversationId !== 'new') {
+      getConversation(conversationId);
+    } else {
+      setSSbowaData([]);
+    }
+  }, [conversationId]);
 
   const chatHelpers = useChatHelpers(index, conversationId);
   return (

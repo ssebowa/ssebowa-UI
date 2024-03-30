@@ -135,7 +135,7 @@ const ApiKey = () => {
         placeholder="<HIDDEN>"
         type="password"
         autoComplete="off"
-        className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800"
+        className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-900"
         {...register('api_key', { required: type === AuthTypeEnum.ServiceHttp })}
       />
       <label className="mb-1 block text-sm font-medium">Auth Type</label>
@@ -200,7 +200,7 @@ const ApiKey = () => {
         <div className="mt-2">
           <label className="mb-1 block text-sm font-medium">Custom Header Name</label>
           <input
-            className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800"
+            className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-900"
             placeholder="X-Api-Key"
             {...register('custom_auth_header', {
               required: authorization_type === AuthorizationTypeEnum.Custom,
@@ -223,7 +223,7 @@ const OAuth = () => {
         placeholder="<HIDDEN>"
         type="password"
         autoComplete="off"
-        className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800"
+        className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-900"
         {...register('oauth_client_id', { required: type === AuthTypeEnum.OAuth })}
       />
       <label className="mb-1 block text-sm font-medium">Client Secret</label>
@@ -231,22 +231,22 @@ const OAuth = () => {
         placeholder="<HIDDEN>"
         type="password"
         autoComplete="off"
-        className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800"
+        className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-900"
         {...register('oauth_client_secret', { required: type === AuthTypeEnum.OAuth })}
       />
       <label className="mb-1 block text-sm font-medium">Authorization URL</label>
       <input
-        className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800"
+        className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-900"
         {...register('authorization_url', { required: type === AuthTypeEnum.OAuth })}
       />
       <label className="mb-1 block text-sm font-medium">Token URL</label>
       <input
-        className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800"
+        className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-900"
         {...register('client_url', { required: type === AuthTypeEnum.OAuth })}
       />
       <label className="mb-1 block text-sm font-medium">Scope</label>
       <input
-        className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800"
+        className="border-token-border-medium mb-2 h-9 w-full resize-none overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-900"
         {...register('scope', { required: type === AuthTypeEnum.OAuth })}
       />
       <label className="mb-1 block text-sm font-medium">Token Exchange Method</label>

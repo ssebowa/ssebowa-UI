@@ -83,6 +83,7 @@ const AuthContextProvider = ({
     loginUser.mutate(data, {
       onSuccess: (data: TLoginResponse) => {
         const { user, token } = data;
+        localStorage.setItem('user', JSON.stringify(user))
         setUserContext({ token, isAuthenticated: true, user, redirect: '/c/new' });
       },
       onError: (error: TResError | unknown) => {
@@ -120,6 +121,10 @@ const AuthContextProvider = ({
       },
     });
   }, []);
+
+  useEffect(() => {
+    if(user) localStorage.setItem('user', JSON.stringify(user))
+  }, [user])
 
   useEffect(() => {
     if (userQuery.data) {

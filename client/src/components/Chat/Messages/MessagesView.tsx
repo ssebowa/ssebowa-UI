@@ -4,22 +4,33 @@ import type { ReactNode } from 'react';
 import ScrollToBottom from '~/components/Messages/ScrollToBottom';
 import { useScreenshot, useMessageScrolling } from '~/hooks';
 import { CSSTransition } from 'react-transition-group';
-import MultiMessage from './MultiMessage';
-import MessageContent from './Content/MessageContent';
-import { cn } from '~/utils';
-import { TypeAnimation } from 'react-type-animation';
 import { ChatDataContext } from '~/App';
+import { ExtendedFile } from '~/common';
+import MessageCard from '~/components/Chat/Messages/MessageCard';
 
 export default function MessagesView({
   messagesTree: _messagesTree,
   Header,
 }: {
   // messagesTree?: TMessage[] | null;
-  messagesTree?: [{ sentByUser: boolean; text: string; isImage: boolean }];
+  messagesTree?: [
+    {
+      messageId: string;
+      feedback: 'positive' | 'negative';
+      sentByUser: boolean;
+      text: string;
+      isImage: boolean;
+      files: ExtendedFile[];
+    },
+  ];
   Header?: ReactNode;
 }) {
   const { screenshotTargetRef } = useScreenshot();
-  const [currentEditId, setCurrentEditId] = useState<number | string | null>(-1);
+  const [editMessage, setEditMessage] = useState({
+    idx: -1,
+    enable: false,
+    message: '',
+  });
 
   const {
     conversation,
@@ -29,8 +40,47 @@ export default function MessagesView({
     handleSmoothToRef,
     debouncedHandleScroll,
   } = useMessageScrolling(_messagesTree);
-  const { conversationId } = conversation ?? {};
-  const { isLoading } = useContext(ChatDataContext);
+  const { updateChatMessage } = useContext(ChatDataContext);
+
+  const handleSubmitEditMessage = async () => {
+    const message = _messagesTree?.[editMessage.idx];
+    const fileMap = new Map();
+    const getAllFile = message?.files?.map(async (file) => {
+      const imgUrl =
+        file.source === 'local' ? `${window.location.origin}${file.filepath}` : file.filepath;
+      if (!imgUrl) return;
+      const response = await fetch(imgUrl);
+      const blob = await response.blob();
+      const fileBlob = new File([blob], file.filename ?? '', { type: file.type });
+
+      const extendedFile: ExtendedFile = {
+        _id: file._id,
+        file_id: file.file_id,
+        source: file.source,
+        filepath: file.filepath,
+        file: fileBlob,
+        type: file.type,
+        preview: URL.createObjectURL(blob),
+        progress: 1,
+        size: fileBlob.size,
+      };
+      fileMap.set(file.file_id, extendedFile);
+    });
+    if (getAllFile) {
+      await Promise.all(getAllFile);
+    }
+    updateChatMessage({
+      messageId: message?.messageId ?? '',
+      text: editMessage.message,
+      files: fileMap,
+      answerId: _messagesTree?.[editMessage.idx + 1]?.messageId ?? '',
+    });
+    setEditMessage({
+      idx: -1,
+      enable: false,
+      message: '',
+    });
+  };
 
   return (
     <div className="flex-1 overflow-hidden overflow-y-auto">
@@ -46,7 +96,7 @@ export default function MessagesView({
         >
           <div className="flex flex-col pb-9 text-sm dark:bg-transparent">
             {(_messagesTree && !_messagesTree?.length) || _messagesTree === null ? (
-              <div className="flex w-full items-center justify-center gap-1 bg-gray-50 p-3 text-sm text-gray-500 dark:border-gray-800/50 dark:bg-gray-800 dark:text-gray-300">
+              <div className="flex w-full items-center justify-center gap-1 bg-gray-50 p-3 text-sm text-gray-500 dark:border-gray-800/50 dark:bg-gray-900 dark:text-gray-300">
                 Nothing found
               </div>
             ) : (
@@ -61,6 +111,7 @@ export default function MessagesView({
                     currentEditId={currentEditId ?? null}
                   />
                 </div> */}
+                {/* <div>{_messagesTree?.length}</div> */}
                 <div ref={screenshotTargetRef}>
                   <>
                     {_messagesTree?.map((item, idx) => {
@@ -70,7 +121,11 @@ export default function MessagesView({
                           className="text-token-text-primary w-full border-0 bg-transparent dark:border-0 dark:bg-transparent"
                         >
                           <div className="m-auto justify-center p-4 py-2 text-base md:gap-6 ">
-                            <div className="} group mx-auto flex flex-1 gap-3 text-base md:max-w-3xl md:px-5 lg:max-w-[40rem] lg:px-1 xl:max-w-[48rem] xl:px-5">
+                            <div className={`
+                                group mx-auto flex flex-1 gap-3 text-base md:max-w-3xl 
+                                md:px-5 lg:max-w-[40rem] lg:px-1 xl:max-w-[48rem] xl:px-5
+                                ${item?.sentByUser ? 'mt-3' : ''}
+                              `}>
                               <div className="relative flex flex-shrink-0 flex-col items-end">
                                 <div>
                                   <div className="pt-0.5">
@@ -106,37 +161,15 @@ export default function MessagesView({
                                   </div>
                                 </div>
                               </div>
-                              <div
-                                className={cn(
-                                  'relative flex w-full flex-col',
-                                  item?.sentByUser ? '' : 'agent-turn',
-                                )}
-                              >
-                                <div className="select-none font-semibold">
-                                  {item?.sentByUser ? 'You' : 'SsebowaAI'}
-                                </div>
-                                <div className="flex-col gap-1 md:gap-3">
-                                  <div className="flex max-w-full flex-grow flex-col gap-0">
-                                    {item?.isImage ? (
-                                      <img
-                                        src={item?.text}
-                                        className="mt-2 max-h-[500px] rounded"
-                                      />
-                                    ) : !item?.sentByUser && idx == _messagesTree?.length - 1 ? (
-                                      <TypeAnimation
-                                        splitter={(str) => str.split(/(?= )/)}
-                                        sequence={[item?.text, 3000, item?.text]}
-                                        style={{ whiteSpace: 'pre-wrap' }}
-                                        speed={{ type: 'keyStrokeDelayInMs', value: 30 }}
-                                        repeat={0}
-                                        cursor={isLoading}
-                                      />
-                                    ) : (
-                                      <div style={{ whiteSpace: 'pre-wrap' }}>{item?.text}</div>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
+                              <MessageCard
+                                item={item}
+                                idx={idx}
+                                editMessage={editMessage}
+                                setEditMessage={setEditMessage}
+                                handleSubmitEditMessage={handleSubmitEditMessage}
+                                conversation={conversation}
+                                listLength={_messagesTree?.length}
+                              />
                             </div>
                           </div>
                         </div>

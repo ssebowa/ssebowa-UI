@@ -43,7 +43,7 @@ export default function ModelItem({
         value={value}
         className={cn(
           'group dark:font-semibold dark:text-gray-200 dark:hover:bg-gray-800',
-          isSelected ? 'active bg-gray-50 dark:bg-gray-800' : '',
+          isSelected ? 'active bg-gray-50 dark:bg-gray-900' : '',
         )}
         id={endpoint}
         data-testid={`endpoint-item-${endpoint}`}
