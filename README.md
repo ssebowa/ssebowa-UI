@@ -41,9 +41,9 @@
 
 🆓💻🌐 Free & Open Source: Ssebowa's functionalities are completely open source and free, fostering innovation and accessibility.
 
-💰🌱 Sustainable Funding for Good: Non-intrusive ads displayed at the bottom of each response generate revenue. 100% of this revenue goes towards fighting poverty and climate change.
+💰💻🌱 Sustainable Funding for Good: Non-intrusive ads displayed at the bottom of each response generate revenue. 100% of this revenue goes towards fighting poverty and climate change.
 
-🧠🔬 Advanced AI Models: Leverage Ssebowa-Imagen for image generation and Ssebowa-vllm for powerful text and image understanding.
+🧠💻🔬 Advanced AI Models: Leverage Ssebowa-Imagen for image generation and Ssebowa-vllm for powerful text and image understanding.
 
 
 <p align="">
