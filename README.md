@@ -1,4 +1,4 @@
-# 🎉 Ssebowa: Open-Source Generative AI Platform Serving Humanity! 🌟
+# 🎉 Free-to-use & Open-Source AI Platform Serving Humanity! 🌟
 
 <p align="">
   <a href="https://ssebowa.ai">
