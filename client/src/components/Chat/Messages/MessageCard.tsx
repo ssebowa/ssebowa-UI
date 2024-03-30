@@ -87,14 +87,14 @@ export default function MessageCard({
             px-4 transition-[color_transform] ease-in
             ${
               editMessage.idx === idx && editMessage.enable
-                ? `py-3 scale-[1.002] bg-gray-900 border-2 !border-gray-800
+                ? `py-3 scale-[1.002] dark:bg-gray-900 border-2 !dark:border-gray-800
                     shadow-[0_0_10px_5px_rgba(0,0,0,0.10)]
                 `
                 : ''
             }
             ${
               !item?.sentByUser
-                ? `py-3 bg-gray-900 border-2 border-gray-800
+                ? `py-3 dark:bg-gray-900 border-2 dark:border-gray-800
                     shadow-[0_0_10px_5px_rgba(0,0,0,0.10)]`
                 : 'py-2 border-2 border-transparent'
             }
@@ -171,7 +171,7 @@ export default function MessageCard({
               >
                 <XIcon
                   size={18}
-                  className="duration-[500ms] stroke-gray-400 transition-all hover:stroke-white"
+                  className="duration-[500ms] stroke-gray-400 transition-all dark:hover:stroke-white hover:stroke-black"
                 />
               </div>
             </div>
@@ -192,7 +192,7 @@ export default function MessageCard({
                 >
                   <CopyIcon
                     size={18}
-                    className="duration-[500ms] stroke-gray-400 transition-all hover:stroke-white"
+                    className="duration-[500ms] stroke-gray-400 transition-all dark:hover:stroke-white hover:stroke-black"
                   />
                 </div>
               ) : null}
@@ -209,7 +209,7 @@ export default function MessageCard({
                 >
                   <EditIcon
                     size={18}
-                    className="duration-[500ms] stroke-gray-400 transition-all hover:stroke-white"
+                    className="duration-[500ms] stroke-gray-400 transition-all dark:hover:stroke-white hover:stroke-black"
                   />
                 </div>
               ) : (
@@ -224,7 +224,7 @@ export default function MessageCard({
                         duration-[500ms] transition-all ${
                           item?.feedback === 'positive'
                             ? 'stroke-green-500'
-                            : 'stroke-gray-400 hover:stroke-white'
+                            : 'stroke-gray-400 dark:hover:stroke-white hover:stroke-black'
                         }`}
                     />
                   </div>
@@ -238,7 +238,7 @@ export default function MessageCard({
                         duration-[500ms] transition-all ${
                           item?.feedback === 'negative'
                             ? 'stroke-red-500'
-                            : 'stroke-gray-400 hover:stroke-white'
+                            : 'stroke-gray-400 dark:hover:stroke-white hover:stroke-black'
                         }`}
                     />
                   </div>
