@@ -87,16 +87,16 @@ export default function MessageCard({
             px-4 transition-[color_transform] ease-in
             ${
               editMessage.idx === idx && editMessage.enable
-                ? `py-3 scale-[1.002] bg-gray-900 border-2 border-gray-800
+                ? `py-3 scale-[1.002] bg-gray-900 border-2 !border-gray-800
                     shadow-[0_0_10px_5px_rgba(0,0,0,0.10)]
                 `
-                : 'border-2 border-transparent'
+                : ''
             }
             ${
               !item?.sentByUser
                 ? `py-3 bg-gray-900 border-2 border-gray-800
                     shadow-[0_0_10px_5px_rgba(0,0,0,0.10)]`
-                : 'py-2'
+                : 'py-2 border-2 border-transparent'
             }
         `}
           onMouseEnter={() => setContainerMessageHovering(true)}
