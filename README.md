@@ -31,10 +31,10 @@
 🤖🎉Ssebowa is an open-source and free-to-use generative AI platform offering free access to powerful AI models for everyone. Think of us as the ChatGPT4 for the greater good! We provide powerful AI functionalities like ✍️text generation, 📸image creation from text descriptions, and image understanding. We empower everyone to interact with cutting-edge AI technology, fostering creativity and innovation🧠.
 
 
-##  🌍 + 💖 + ⚙️ + 🌳 = 🎯 Our Mission 🔮
+##  🌍 + 💖 + ⚙️ + 🌳 = 🎯 Our Vision 🔮
 
 
-🤖🌍🌳 Empowering people with cutting-edge AI technology while creating a positive social impact! 🌍🚀
+🤖🌍🌳 We picture a world where AI serves everyone equally, igniting learning & bonding diverse folks; that's Ssebowa's ambitious goal! Motivated by love, wisdom, & safeguarding Earth, we merge minds & hearts, forming global friendships. Together, let's create a sharp, affectionate, & earth-loving chapter via sincere dialogues. 🌍🚀
 
 
 ## 🤔 + ❤️ + 🙌 + 🌍 = 💻 How We Do It 🌱
