@@ -34,7 +34,7 @@
 ##  🌍 + 💖 + ⚙️ + 🌳 = 🎯 Our Vision 🔮
 
 
-🤖🌍🌳 Here at Ssebowa, we picture a world where Artificial Intelligence is not a walled garden for the privileged few. But a tool that empowers everyone, a wellspring of creativity, and knowledge accessible to all. That's why we're building Ssebowa AI – a platform as powerful and versatile as ChatGPT4, but with 4 key differences: Ssebowa serves humanity, it's completely free, open-source, and anyone can use it without breaking the bank. 🌍🚀
+🤖🌍🌳 Here at Ssebowa, we picture a world where Artificial Intelligence is not a walled garden for the privileged few. But a tool that empowers everyone, a wellspring of creativity, and knowledge accessible to all. That's why we're building Ssebowa AI – a platform as powerful and versatile as ChatGPT4, but with 4 key differences: Ssebowa serves humanity, it's completely open-source, and anyone can use it without breaking the bank. 🌍🚀
 
 
 ## 🤔 + ❤️ + 🙌 + 🌍 = 💻 How We Do It 🌱
