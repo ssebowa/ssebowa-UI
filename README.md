@@ -168,6 +168,3 @@ Thanks to you, Ssebowa AI surges ever closer to becoming a cornerstone of univer
 
 Go forth, heroes! 🚀
 
-## 🤝 Credits
-
-Librechat.
